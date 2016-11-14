@@ -1,9 +1,11 @@
 {% extends "base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
 
+{% block page_content %}
 <form action="/signin" method="post">
     <legend>Please sign in:</legend>
     <p><input name="username" placeholder="Username" value="{{ username }}"></p>
     <p><input name="password" placeholder="Password" type="password"></p>
     <p><button type="submit">Sign In</button></p>
 </form>
+{% endblock %}

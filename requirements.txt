@@ -1,8 +1,10 @@
 click==6.6
 dominate==2.3.0
 Flask==0.11.1
+flask-appconfig==0.11.1
 Flask-Bootstrap==3.3.7.0
 Flask-Debug==0.4.3
+Flask-Moment==0.5.1
 Flask-Redis==0.3.0
 Flask-Script==2.0.5
 Flask-SQLAlchemy==2.1
