@@ -1,5 +1,7 @@
 .profile
 *.iml
+*/*.iml
 .idea/
 venv/
 *.pyc
+*/*.pyc
