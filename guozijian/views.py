@@ -1,14 +1,11 @@
 # -*- coding: utf-8 -*-
-from flask import Flask, render_template, redirect, url_for
+from flask import render_template, redirect, url_for
 from flask_bootstrap import Bootstrap
 from flask_moment import Moment
-from flask_script import Manager
+from guozijian import app
 
-app = Flask(__name__)
-manager = Manager(app)
 bootstrap = Bootstrap(app)
 moment = Moment(app)
-
 
 @app.route('/')
 def home():
@@ -27,6 +24,3 @@ def index():
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html'),404
-
-if __name__ == "__main__":
-    manager.run()
