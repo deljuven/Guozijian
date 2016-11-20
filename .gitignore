@@ -1,5 +1,6 @@
 .profile
 *.iml
+*.env
 */*.iml
 .idea/
 venv/
