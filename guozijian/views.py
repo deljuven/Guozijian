@@ -4,6 +4,7 @@ from flask_bootstrap import Bootstrap
 from flask_moment import Moment
 from guozijian import app
 
+
 bootstrap = Bootstrap(app)
 moment = Moment(app)
 
