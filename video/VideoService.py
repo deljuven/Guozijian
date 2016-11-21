@@ -51,19 +51,18 @@ class VideoException (Exception):
     def __str__ (self):
         return repr(self.msg)
 
-if __name__=="__main__":
-    try:
-        vs = VideoService()
-        device = vs.device_serial()
-        pic = vs.take_picture(device)
-        file_path = '/Users/liran/'
-        timestamp = time.strftime("%Y%m%d%H%M%S", time.localtime(time.time()))
-        fullFileName = file_path + timestamp + '.png'
-        print fullFileName
-        vs.save_picture(pic, fullFileName)
-    except VideoException as e:
-        print e.msg
-    #print fullFileName
+# if __name__=="__main__":
+#     try:
+#         vs = VideoService()
+#         device = vs.device_serial()
+#         pic = vs.take_picture(device)
+#         file_path = '/Users/liran/'
+#         timestamp = time.strftime("%Y%m%d%H%M%S", time.localtime(time.time()))
+#         fullFileName = file_path + timestamp + '.png'
+#         print fullFileName
+#         vs.save_picture(pic, fullFileName)
+#     except VideoException as e:
+#         print e.msg
 
 
 
