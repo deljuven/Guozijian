@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 from flask_user import UserMixin
+from flask_wtf import Form
+from wtforms import StringField, PasswordField, validators, BooleanField
 
 from guozijian import db
 
 
 class User(db.Model, UserMixin):
     __tablename__ = 'user'
-    id = db.Column("id", db.Integer, primary_key=True)
+    id = db.Column("id", db.Integer, primary_key=True, autoincrement=True)
     name = db.Column("name", db.String(100), unique=True)
     password = db.Column("passwd", db.String(100))
     email = db.Column("email", db.String(100), unique=True)
@@ -33,3 +35,19 @@ class User(db.Model, UserMixin):
 
     def get(user_id):
         pass
+
+
+class LoginForm(Form):
+    username = StringField('User Name', [validators.DataRequired()])
+    passwd = PasswordField('Password', [validators.DataRequired()])
+
+
+class RegistrationForm(Form):
+    username = StringField('User Name', [validators.DataRequired()])
+    email = StringField('email', [validators.DataRequired()])
+    passwd = PasswordField('New Password', [
+        validators.DataRequired(),
+        validators.EqualTo('confirm', message='Passwords must match')
+    ])
+    confirm = PasswordField('Repeat Password')
+    accept_tos = BooleanField('I accept the ToS', [validators.DataRequired()])

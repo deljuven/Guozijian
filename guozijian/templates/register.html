@@ -21,6 +21,19 @@
 </nav>
 {% endblock %}
 
+{% macro render_field(field) %}
+<dt>{{ field.label }}
+<dd>
+    {% if field.errors %}
+    <ul class=errors>
+        {% for error in field.errors %}
+        <li>{{ error }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+</dd>
+{% endmacro %}
+
 {% block page_content %}
 <div class="container">
     <div class="row">
@@ -30,22 +43,39 @@
                     <h3 class="panel-title">Please Register</h3>
                 </div>
                 <div class="panel-body">
-                    <form role="form">
+                    <form role="form" method="post" action="{{ url_for('register') }}">
                         <fieldset>
+                            {{ render_field(form.username) }}
                             <div class="form-group">
-                                <input class="form-control" placeholder="E-mail" name="email" type="email" autofocus>
+                                {{ form.username(class_="form-control", placeholder="User Name", autofocus=true,
+                                required=true) }}
                             </div>
+                            {{ render_field(form.email) }}
                             <div class="form-group">
-                                <input class="form-control" placeholder="Password" name="password" type="password"
-                                       value="">
+                                {{ form.email(class_="form-control", placeholder="Email Address", autofocus=true,
+                                required=true) }}
+                            </div>
+                            {{ render_field(form.passwd) }}
+                            <div class="form-group">
+                                {{ form.passwd(class_="form-control", required=true) }}
+                            </div>
+                            {{ render_field(form.confirm) }}
+                            <div class="form-group">
+                                {{ form.confirm(class_="form-control", required=true) }}
                             </div>
                             <div class="checkbox">
                                 <label>
-                                    <input name="remember" type="checkbox" value="Remember Me">Remember Me
+                                    {{ form.accept_tos }}
+                                    {{ form.accept_tos.label.text }}
+                                    {% if form.accept_tos.errors %}
+                                    {% for error in form.accept_tos.errors %}
+                                    <span style="color:#e50312;"><strong><em>{{ error }}</em></strong></span>{% endfor %}
+                                    {% endif %}
                                 </label>
                             </div>
                             <!-- Change this to a button or input when using this as a form -->
-                            <a href="index" class="btn btn-lg btn-success btn-block">Register</a>
+                            <input type="submit" class="btn btn-lg btn-success btn-block" value="Register"/>
+                            {{ form.csrf_token }}
                         </fieldset>
                     </form>
                 </div>

@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
-from flask import render_template, redirect, url_for, request, flash
-from flask_login import login_user
+from flask import render_template, redirect, url_for, request
 from flask_moment import Moment
 
-from guozijian import app
-from login import signout, registration, LoginForm
-from models import User, db
+from guozijian import app, db
+from login import signin, signout, registration
+from models import User, LoginForm, RegistrationForm
 
 moment = Moment(app)
 
@@ -24,21 +23,25 @@ def index():
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(name=form.username.data, password=form.passwd.data).first()
-        if user is None:
-            return render_template("login.html", form=form, message="Incorrect username or password")
-        login_user(user)
-        flash('Logged in successfully.')
+        name = form.username.data
+        password = form.passwd.data
+        signin(name, password, form)
         next = request.args.get('next')
-
         return redirect(next or url_for('index'))
     return render_template("login.html", form=form, users=User.query.all())
 
 
-@app.route('/register')
+@app.route('/register', methods=['GET', 'POST'])
 def register():
-    registration()
-    return render_template("index.html")
+    form = RegistrationForm()
+    message = None
+    if form.validate_on_submit():
+        name = form.username.data
+        password = form.passwd.data
+        email = form.email.data
+        registration(name, password, email)
+        return redirect(url_for('login'))
+    return render_template("register.html", form=form)
 
 
 @app.route('/auth/logout')
