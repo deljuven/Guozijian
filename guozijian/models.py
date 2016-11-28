@@ -1,17 +1,15 @@
 # -*- coding: utf-8 -*-
-from flask_sqlalchemy import SQLAlchemy
-from guozijian import app
+from flask_user import UserMixin
 
-db = SQLAlchemy()
-db.init_app(app)
+from guozijian import db
 
 
-class User(db.Model):
+class User(db.Model, UserMixin):
     __tablename__ = 'user'
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), unique=True)
-    password = db.Column(db.String(100))
-    email = db.Column(db.String(100), unique=True)
+    id = db.Column("id", db.Integer, primary_key=True)
+    name = db.Column("name", db.String(100), unique=True)
+    password = db.Column("passwd", db.String(100))
+    email = db.Column("email", db.String(100), unique=True)
 
     def __init__(self, name, password, email):
         self.name = name
@@ -19,7 +17,7 @@ class User(db.Model):
         self.email = email
 
     def __repr__(self):
-        return '<User %r>' % self.username
+        return '<User %r>' % {'name': self.name.encode(), 'email': self.email.encode()}
 
     def is_authenticated(self):
         return True

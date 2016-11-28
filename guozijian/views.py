@@ -2,8 +2,9 @@
 from flask import render_template, redirect, url_for, request, flash
 from flask_login import login_user
 from flask_moment import Moment
+
 from guozijian import app
-from login import signout, registration
+from login import signout, registration, LoginForm
 from models import User, db
 
 moment = Moment(app)
@@ -21,13 +22,17 @@ def index():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    if request.method == 'POST':
-        user = User()
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(name=form.username.data, password=form.passwd.data).first()
+        if user is None:
+            return render_template("login.html", form=form, message="Incorrect username or password")
         login_user(user)
         flash('Logged in successfully.')
         next = request.args.get('next')
+
         return redirect(next or url_for('index'))
-    return render_template("login.html")
+    return render_template("login.html", form=form, users=User.query.all())
 
 
 @app.route('/register')
