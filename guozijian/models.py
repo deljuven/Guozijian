@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from flask_user import UserMixin
-from flask_wtf import Form
+from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, validators, BooleanField
 
 from guozijian import db
@@ -37,12 +37,12 @@ class User(db.Model, UserMixin):
         pass
 
 
-class LoginForm(Form):
+class LoginForm(FlaskForm):
     username = StringField('User Name', [validators.DataRequired()])
     passwd = PasswordField('Password', [validators.DataRequired()])
 
 
-class RegistrationForm(Form):
+class RegistrationForm(FlaskForm):
     username = StringField('User Name', [validators.DataRequired()])
     email = StringField('email', [validators.DataRequired()])
     passwd = PasswordField('New Password', [

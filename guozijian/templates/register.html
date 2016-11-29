@@ -1,4 +1,6 @@
 {% extends "base.html" %}
+{% import "bootstrap/utils.html" as utils %}
+{% from "utils.html" import flash_message %}
 
 {% block title %}国子监-注册{% endblock %}
 
@@ -42,6 +44,7 @@
                 <div class="panel-heading">
                     <h3 class="panel-title">Please Register</h3>
                 </div>
+                {{ flash_message() }}
                 <div class="panel-body">
                     <form role="form" method="post" action="{{ url_for('register') }}">
                         <fieldset>

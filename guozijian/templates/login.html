@@ -1,5 +1,6 @@
 {% extends "base.html" %}
-{% import "bootstrap/wtf.html" as wtf %}
+{% import "bootstrap/utils.html" as utils %}
+{% from "utils.html" import flash_message %}
 
 {% block title %}国子监-登录{% endblock %}
 
@@ -23,9 +24,6 @@
 {% endblock %}
 
 {% block page_content %}
-{% for user in users %}
-<li>{{ user }}</li>
-{% endfor %}
 <div class="container">
     <div class="row">
         <div class="col-md-4 col-md-offset-4">
@@ -33,9 +31,9 @@
                 <div class="panel-heading">
                     <h3 class="panel-title">Please Sign In</h3>
                 </div>
+                {{ flash_message() }}
                 <div class="panel-body">
                     <form role="form" method="post" action="{{ url_for('login') }}">
-                        {{ message }}
                         <fieldset>
                             {{ form.username.label }}
                             <div class="form-group">

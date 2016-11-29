@@ -45,7 +45,7 @@
                 <li><a href="#"><i class="fa fa-gear fa-fw"></i> Settings</a>
                 </li>
                 <li class="divider"></li>
-                <li><a href="login"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
+                <li><a href="logout"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
                 </li>
             </ul>
             <!-- /.dropdown-user -->
@@ -105,7 +105,7 @@
 
 {% block content %}
 <div class="container">
-    {% block page_content %}{% endblock %}
+    {% block page_content %}{% endblock page_content %}
 </div>
 
 {% block scripts %}
@@ -115,13 +115,20 @@
 <script type=text/javascript src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
 <script type=text/javascript src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
 <![endif]-->
-{{  super() }}
-{{ moment.include_moment() }}
+{{ super() }}
+
+<script>
+    $(document).ready(function () {
+        $('.dropdown-toggle').dropdown();
+    });
+</script>
+
 <!-- Metis Menu Plugin JavaScript -->
 <script type=text/javascript src="{{url_for('static', filename='metisMenu/metisMenu.min.js')}}"></script>
+{{ moment.include_moment() }}
 
 <!-- Custom Theme JavaScript -->
 <script type=text/javascript src="{{url_for('static', filename='js/sb-admin-2.js')}}"></script>
-{% endblock %}
+{% endblock scripts %}
 
-{% endblock %}
+{% endblock content %}
