@@ -4,6 +4,11 @@ from io import BytesIO
 
 import requests
 from PIL import Image
+from io import BytesIO
+from video.VideoException import VideoException
+import time
+import os
+import datetime
 
 from guozijian import APP_IMG_SAV_PATH, db
 from guozijian.models import CountInfo
@@ -52,15 +57,6 @@ class VideoService:
         picture_result = requests.get(pic_url)
         img = Image.open(BytesIO(picture_result.content))
         img.save(path)
-
-
-class VideoException(Exception):
-    def __init__(self, msg):
-        self.msg = msg
-
-    def __str__(self):
-        return repr(self.msg)
-
 
 # if __name__=="__main__":
 #     try:
