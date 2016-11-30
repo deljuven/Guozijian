@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from flask import flash
+from flask import flash, session
 from flask_login import login_user, logout_user
 
 from guozijian import login_manager, db
@@ -9,10 +9,10 @@ from models import User
 def signin(username, passwd, form):
     user = User.query.filter_by(name=username, password=passwd).first()
     if user is None:
+        session.pop('_flashes', None)
         flash("Incorrect username or password")
         return False
     login_user(user)
-    flash('Logged in successfully.')
     return True
 
 
@@ -25,7 +25,6 @@ def signup(username, passwd, email):
     db.session.add(user)
     db.session.flush()
     db.session.commit()
-    flash('Thanks for registering')
     login_user(user)
 
 

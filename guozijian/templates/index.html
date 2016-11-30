@@ -1,7 +1,9 @@
 {% extends "base.html" %}
+{% from "utils.html" import flash_message %}
 
 {% block title %}国子监-首页{% endblock %}
 
 {% block page_content %}
+{{ flash_message() }}
 <h1>请补充内容</h1>
 {% endblock %}

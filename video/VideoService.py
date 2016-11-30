@@ -64,6 +64,10 @@ class VideoException (Exception):
 #     except VideoException as e:
 #         print e.msg
 
+class Test:
+    def test(self):
+        return "test"
+
 
 
 

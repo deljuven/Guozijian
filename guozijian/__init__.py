@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from flask import Flask
 from flask_bootstrap import Bootstrap
-from flask_user import LoginManager
 from flask_sqlalchemy import SQLAlchemy
+from flask_user import LoginManager
 
 DB_URI = 'mysql+pymysql://mysql:ef5793f4772cfe5a@202.120.40.20:11266/guozijian'
 
@@ -21,5 +21,5 @@ login_manager.init_app(app)
 db = SQLAlchemy()
 db.init_app(app)
 
-
 import guozijian.views
+import guozijian.models

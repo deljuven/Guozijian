@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
-from flask import render_template, redirect, url_for, request
+from flask import render_template, redirect, url_for, request, flash, session
 from flask_login import login_required
 from flask_moment import Moment
 
 from guozijian import app, db, login_manager
 from login import signin, signout, signup
 from models import User, LoginForm, RegistrationForm
+
+from video.VideoService import Test
 
 moment = Moment(app)
 
@@ -19,6 +21,8 @@ def home():
 @app.route('/index')
 @login_required
 def index():
+    session.pop('_flashes', None)
+    flash(Test().test())
     return render_template("index.html")
 
 
