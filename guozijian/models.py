@@ -9,9 +9,9 @@ from guozijian import db
 class User(db.Model, UserMixin):
     __tablename__ = 'user'
     id = db.Column("id", db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column("name", db.String(100), unique=True)
-    password = db.Column("passwd", db.String(100))
-    email = db.Column("email", db.String(100), unique=True)
+    name = db.Column("name", db.String(100), unique=True, nullable=False)
+    password = db.Column("passwd", db.String(100), nullable=False)
+    email = db.Column("email", db.String(100), unique=True, nullable=False)
 
     def __init__(self, name, password, email):
         self.name = name
@@ -35,6 +35,24 @@ class User(db.Model, UserMixin):
 
     def get(user_id):
         pass
+
+
+class CountInfo(db.Model):
+    __tablename__ = 'count_info'
+    id = db.Column("id", db.Integer, primary_key=True, autoincrement=True, nullable=False)
+    name = db.Column("name", db.String(100), unique=True, nullable=False)
+    uri = db.Column("uri", db.String(200), unique=True, nullable=False)
+    taken_at = db.Column("taken_at", db.DateTime, nullable=False)
+    count = db.Column("count", db.Integer)
+
+    def __init__(self, name, uri, taken_at, count=None):
+        self.name = name
+        self.uri = uri
+        self.taken_at = taken_at
+        self.count = count
+
+    def __repr__(self):
+        return '<User %r>' % {'name': self.name.encode(), 'uri': self.uri.encode()}
 
 
 class LoginForm(FlaskForm):
