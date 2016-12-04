@@ -20,4 +20,10 @@
     height: 100%;
 }
 
+.vertical-center {
+    position: absolute;
+    top: 30%;
+}
+
+
 

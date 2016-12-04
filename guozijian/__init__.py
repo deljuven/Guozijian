@@ -4,7 +4,9 @@ from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 from flask_user import LoginManager
 
-DB_URI = 'mysql+pymysql://mysql:ef5793f4772cfe5a@202.120.40.20:11266/guozijian'
+from utils import DB_URI
+from scheduler import init_scheduler, add_schedule, scheduler
+
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = DB_URI
@@ -20,6 +22,10 @@ login_manager.init_app(app)
 
 db = SQLAlchemy()
 db.init_app(app)
+
+init_scheduler()
+add_schedule()
+# scheduler.start()
 
 import guozijian.views
 import guozijian.models

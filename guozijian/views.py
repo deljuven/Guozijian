@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
-from flask import render_template, redirect, url_for, request, flash, session
+from flask import render_template, redirect, url_for, request, flash, session, jsonify
 from flask_login import login_required
 from flask_moment import Moment
 
 from guozijian import app, db, login_manager
 from login import signin, signout, signup
 from models import User, LoginForm, RegistrationForm
-
 from video.VideoService import Test
+from scheduler import scheduler
 
 moment = Moment(app)
 
@@ -88,3 +88,10 @@ def testdb():
         return 'It works.'
     else:
         return 'Something is broken.'
+
+
+@app.route('/snapshot')
+@login_required
+def snapshot():
+    scheduler.start()
+    return jsonify(title="hello world")
