@@ -6,6 +6,22 @@ from wtforms import StringField, PasswordField, validators, BooleanField
 from guozijian import db
 
 
+class LoginForm(FlaskForm):
+    username = StringField('User Name', [validators.DataRequired()])
+    passwd = PasswordField('Password', [validators.DataRequired()])
+
+
+class RegistrationForm(FlaskForm):
+    username = StringField('User Name', [validators.DataRequired()])
+    email = StringField('email', [validators.DataRequired()])
+    passwd = PasswordField('New Password', [
+        validators.DataRequired(),
+        validators.EqualTo('confirm', message='Passwords must match')
+    ])
+    confirm = PasswordField('Repeat Password')
+    accept_tos = BooleanField('I accept the ToS', [validators.DataRequired()])
+
+
 class User(db.Model, UserMixin):
     __tablename__ = 'user'
     id = db.Column("id", db.Integer, primary_key=True, autoincrement=True)
@@ -54,18 +70,3 @@ class CountInfo(db.Model):
     def __repr__(self):
         return '<User %r>' % {'name': self.name.encode(), 'uri': self.uri.encode()}
 
-
-class LoginForm(FlaskForm):
-    username = StringField('User Name', [validators.DataRequired()])
-    passwd = PasswordField('Password', [validators.DataRequired()])
-
-
-class RegistrationForm(FlaskForm):
-    username = StringField('User Name', [validators.DataRequired()])
-    email = StringField('email', [validators.DataRequired()])
-    passwd = PasswordField('New Password', [
-        validators.DataRequired(),
-        validators.EqualTo('confirm', message='Passwords must match')
-    ])
-    confirm = PasswordField('Repeat Password')
-    accept_tos = BooleanField('I accept the ToS', [validators.DataRequired()])

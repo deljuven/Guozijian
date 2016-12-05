@@ -1,19 +1,21 @@
+import datetime
+import os
+from io import BytesIO
+
 import requests
 from PIL import Image
-from io import BytesIO
-import time
-import os
-import datetime
 
 from guozijian import APP_IMG_SAV_PATH, db
 from guozijian.models import CountInfo
 
+
 class VideoService:
     get_token_params = {'appKey': 'a48e330633804b81bd330b0a375db879', 'appSecret': '24597738ce4b615837d10ca3342ba7db'}
-    header = {'content-type':'application/x-www-form-urlencoded'}
-    access_token_params  = None
+    header = {'content-type': 'application/x-www-form-urlencoded'}
+    access_token_params = None
+
     def __init__(self):
-        #get access token during init
+        # get access token during init
         print 'starting to retrieve access token...'
         result = requests.post('https://open.ys7.com/api/lapp/token/get', self.get_token_params, self.header)
         res_json = result.json()
@@ -24,7 +26,8 @@ class VideoService:
     def device_serial(self):
         '''return device info'''
         print 'starting to retrieve device list...'
-        devices_result = requests.post('https://open.ys7.com/api/lapp/device/list', self.access_token_params, self.header)
+        devices_result = requests.post('https://open.ys7.com/api/lapp/device/list', self.access_token_params,
+                                       self.header)
         devices_json = devices_result.json()
         if devices_json['code'] != '200':
             raise VideoException(devices_json['code'] + devices_json['msg'])
@@ -50,11 +53,14 @@ class VideoService:
         img = Image.open(BytesIO(picture_result.content))
         img.save(path)
 
-class VideoException (Exception):
-    def __init__ (self, msg):
+
+class VideoException(Exception):
+    def __init__(self, msg):
         self.msg = msg
-    def __str__ (self):
+
+    def __str__(self):
         return repr(self.msg)
+
 
 # if __name__=="__main__":
 #     try:
@@ -75,20 +81,8 @@ class Test:
 
     def save_to_db(self):
         name = "test.jpg"
-        uri =  os.path.join(APP_IMG_SAV_PATH, name)
+        uri = os.path.join(APP_IMG_SAV_PATH, name)
         count = CountInfo(name, uri, datetime.datetime.now(), 1)
         db.session.add(count)
         db.session.flush()
         db.session.commit()
-
-
-
-
-
-
-
-
-
-
-
-
