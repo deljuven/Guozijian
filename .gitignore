@@ -8,3 +8,4 @@ venv/
 */*.pyc
 *.db
 */*.db
+*/static/data/img
