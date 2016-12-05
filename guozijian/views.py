@@ -8,6 +8,12 @@ from guozijian import app, db, login_manager
 from login import signin, signout, signup
 from models import User, LoginForm, RegistrationForm, CountInfo
 from utils import PER_PAGE
+from video.VideoService import VideoService
+from face.ImageDetector import  ImageDetector
+from datetime import datetime
+from scheduler import scheduler
+
+import os
 
 moment = Moment(app)
 
@@ -104,5 +110,17 @@ def testdb():
 @app.route('/snapshot')
 @login_required
 def snapshot():
-    # liran use for test here
+    vs = VideoService()
+    url = vs.take_picture()
+    detector = ImageDetector(url)
+    faces = detector.detect()
+    detector.save_to_db(faces)
     return jsonify(title="hello world")
+
+
+def save_to_db(self, face_count):
+    name = os.path.basename(self.file_path)
+    count = CountInfo(name, self.file_path, datetime.now(), face_count)
+    db.session.add(count)
+    db.session.flush()
+    db.session.commit()

@@ -66,19 +66,19 @@ class ImageDetector:
         #return: face counts
         return face_counts
 
-    # def save_to_db(self, face_count):
-    #     name = os.path.basename(self.file_path)
-    #     count = CountInfo(name, self.file_path, datetime.now(), face_count)
-    #     db.session.add(count)
-    #     db.session.flush()
-    #     db.session.commit()
+    def save_to_db(self, face_count):
+        name = os.path.basename(self.file_path)
+        count = CountInfo(name, self.file_path, datetime.now(), face_count)
+        db.session.add(count)
+        db.session.flush()
+        db.session.commit()
 
-# if __name__ == '__main__':
-#     try:
-#         vs = VideoService()
-#         url = vs.take_picture()
-#         detector = ImageDetector(url)
-#         faces = detector.detect()
-#         detector.save_to_db(faces)
-#     except VideoException as e:
-#         print e.msg
+if __name__ == '__main__':
+    try:
+        vs = VideoService()
+        url = vs.take_picture()
+        detector = ImageDetector(url)
+        faces = detector.detect()
+        detector.save_to_db(faces)
+    except VideoException as e:
+        print e.msg
