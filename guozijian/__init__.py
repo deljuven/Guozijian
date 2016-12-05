@@ -17,7 +17,13 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 # app.debug = True;
 # app.use_reloader = True;
 
-APP_IMG_SAV_PATH = os.path.join(app.instance_path, 'static', 'data', 'img')
+APP_IMG_SAV_PATH = os.path.join(app.root_path, 'static', 'data', 'img')
+DB_PATH = os.path.join(app.root_path, 'db')
+
+if not os.path.exists(APP_IMG_SAV_PATH):
+    os.makedirs(APP_IMG_SAV_PATH)
+if not os.path.exists(DB_PATH):
+    os.makedirs(DB_PATH)
 
 bootstrap = Bootstrap(app)
 
