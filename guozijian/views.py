@@ -91,5 +91,5 @@ def testdb():
 @app.route('/snapshot')
 @login_required
 def snapshot():
-    scheduler.start()
+    # liran use for test here
     return jsonify(title="hello world")
