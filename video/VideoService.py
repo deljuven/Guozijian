@@ -3,15 +3,7 @@ import os
 from io import BytesIO
 
 import requests
-from PIL import Image
-from io import BytesIO
 from video.VideoException import VideoException
-import time
-import os
-import datetime
-
-from guozijian import APP_IMG_SAV_PATH, db
-from guozijian.models import CountInfo
 
 
 class VideoService:
@@ -28,57 +20,38 @@ class VideoService:
             raise VideoException(res_json['code'] + res_json['msg'])
         self.access_token_params = {'accessToken': res_json['data']['accessToken']}
 
-    def device_serial(self):
-        '''return device info'''
-        print 'starting to retrieve device list...'
+    def take_picture(self):
+        print '...Retrieving device list...'
         devices_result = requests.post('https://open.ys7.com/api/lapp/device/list', self.access_token_params,
                                        self.header)
         devices_json = devices_result.json()
         if devices_json['code'] != '200':
             raise VideoException(devices_json['code'] + devices_json['msg'])
         dev = devices_json['data'][0]
-        return dev
 
-    def take_picture(self, device):
-        '''return picture url'''
         params = self.access_token_params
-        params['deviceSerial'] = device['deviceSerial']
+        params['deviceSerial'] = dev['deviceSerial']
         params['channelNo'] = 1
 
+        print '...Taking picture at ' + dev['deviceName'] + '...'
         pic_result = requests.post('https://open.ys7.com/api/lapp/device/capture', params, headers=self.header)
         pic_json = pic_result.json()
         if pic_json['code'] != '200':
             raise VideoException(pic_json['code'] + pic_json['msg'])
-        print '...now taking picture at ' + device['deviceName']
 
         return pic_json['data']['picUrl']
 
-    def save_picture(self, pic_url, path):
-        picture_result = requests.get(pic_url)
-        img = Image.open(BytesIO(picture_result.content))
-        img.save(path)
 
-# if __name__=="__main__":
-#     try:
-#         vs = VideoService()
-#         device = vs.device_serial()
-#         pic = vs.take_picture(device)
-#         file_path = '/Users/liran/'
-#         timestamp = time.strftime("%Y%m%d%H%M%S", time.localtime(time.time()))
-#         fullFileName = file_path + timestamp + '.png'
-#         print fullFileName
-#         vs.save_picture(pic, fullFileName)
-#     except VideoException as e:
-#         print e.msg
 
 class Test:
     def test(self):
         return "test"
+#
+#     def save_to_db(self):
+#         name = "test.jpg"
+#         uri =  os.path.join(APP_IMG_SAV_PATH, name)
+#         count = CountInfo(name, uri, datetime.datetime.now(), 1)
+#         db.session.add(count)
+#         db.session.flush()
+#         db.session.commit()
 
-    def save_to_db(self):
-        name = "test.jpg"
-        uri = os.path.join(APP_IMG_SAV_PATH, name)
-        count = CountInfo(name, uri, datetime.datetime.now(), 1)
-        db.session.add(count)
-        db.session.flush()
-        db.session.commit()
