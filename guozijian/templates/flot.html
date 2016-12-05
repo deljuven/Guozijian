@@ -121,11 +121,11 @@
 
 {% block scripts %}
 {{  super() }}
-<script type=text/javascript src="{{url_for('static', filename='flot/excanvas.min.js')}}"></script>
-<script type=text/javascript src="{{url_for('static', filename='flot/jquery.flot.js')}}"></script>
-<script type=text/javascript src="{{url_for('static', filename='flot/jquery.flot.pie.js')}}"></script>
-<script type=text/javascript src="{{url_for('static', filename='flot/jquery.flot.resize.js')}}"></script>
-<script type=text/javascript src="{{url_for('static', filename='flot/jquery.flot.time.js')}}"></script>
-<script type=text/javascript src="{{url_for('static', filename='flot-tooltip/jquery.flot.tooltip.min.js')}}"></script>
+<script type=text/javascript src="{{url_for('static', filename='vendor/flot/excanvas.min.js')}}"></script>
+<script type=text/javascript src="{{url_for('static', filename='vendor/flot/jquery.flot.js')}}"></script>
+<script type=text/javascript src="{{url_for('static', filename='vendor/flot/jquery.flot.pie.js')}}"></script>
+<script type=text/javascript src="{{url_for('static', filename='vendor/flot/jquery.flot.resize.js')}}"></script>
+<script type=text/javascript src="{{url_for('static', filename='vendor/flot/jquery.flot.time.js')}}"></script>
+<script type=text/javascript src="{{url_for('static', filename='vendor/flot-tooltip/jquery.flot.tooltip.min.js')}}"></script>
 <script type=text/javascript src="{{url_for('static', filename='data/flot-data.js')}}"></script>
 {% endblock %}

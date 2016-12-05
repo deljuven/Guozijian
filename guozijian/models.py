@@ -55,7 +55,7 @@ class User(db.Model, UserMixin):
 
 class CountInfo(db.Model):
     __tablename__ = 'count_info'
-    id = db.Column("id", db.Integer, primary_key=True, autoincrement=True, nullable=False)
+    id = db.Column("id", db.Integer, primary_key=True, autoincrement=True)
     name = db.Column("name", db.String(100), unique=True, nullable=False)
     uri = db.Column("uri", db.String(200), unique=True, nullable=False)
     taken_at = db.Column("taken_at", db.DateTime, nullable=False)

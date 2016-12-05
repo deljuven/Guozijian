@@ -16,9 +16,9 @@
 
 {% block styles %}
 {{ super() }}
-<link rel="stylesheet" href="{{url_for('static', filename='metisMenu/metisMenu.min.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='vendor/metisMenu/metisMenu.min.css')}}">
 <link rel="stylesheet" href="{{url_for('static', filename='css/sb-admin-2.css')}}">
-<link rel="stylesheet" href="{{url_for('static', filename='font-awesome/css/font-awesome.min.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='vendor/font-awesome/css/font-awesome.min.css')}}">
 {% endblock %}
 
 {% block body %}
@@ -127,7 +127,7 @@
 </script>
 
 <!-- Metis Menu Plugin JavaScript -->
-<script type=text/javascript src="{{url_for('static', filename='metisMenu/metisMenu.min.js')}}"></script>
+<script type=text/javascript src="{{url_for('static', filename='vendor/metisMenu/metisMenu.min.js')}}"></script>
 {{ moment.include_moment() }}
 
 <!-- Custom Theme JavaScript -->

@@ -16,6 +16,7 @@
 }
 
 .panel-eq-height {
+    position: relative;
     margin-bottom: inherit;
     height: 100%;
 }
@@ -25,5 +26,9 @@
     top: 30%;
 }
 
-
-
+.bottom-aligned {
+    position: absolute;
+    bottom: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+}

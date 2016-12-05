@@ -4,7 +4,7 @@
 
 {% block styles %}
 {{ super() }}
-<link rel="stylesheet" href="{{url_for('static', filename='morrisjs/morris.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='vendor/morrisjs/morris.css')}}">
 {% endblock %}
 
 {% block page_content %}
@@ -98,7 +98,7 @@
 
 {% block scripts %}
 {{  super() }}
-<script type=text/javascript src="{{url_for('static', filename='raphael/raphael.min.js')}}"></script>
-<script type=text/javascript src="{{url_for('static', filename='morrisjs/morris.min.js')}}"></script>
+<script type=text/javascript src="{{url_for('static', filename='vendor/raphael/raphael.min.js')}}"></script>
+<script type=text/javascript src="{{url_for('static', filename='vendor/morrisjs/morris.min.js')}}"></script>
 <script type=text/javascript src="{{url_for('static', filename='data/morris-data.js')}}"></script>
 {% endblock %}

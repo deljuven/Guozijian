@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
-from flask import render_template, redirect, url_for, request, flash, session, jsonify
+from flask import render_template, redirect, url_for, request, jsonify
 from flask_login import login_required
 from flask_moment import Moment
 
 from guozijian import app, db, login_manager
 from login import signin, signout, signup
-from models import User, LoginForm, RegistrationForm
-from video.VideoService import Test
+from models import User, LoginForm, RegistrationForm, CountInfo
 from scheduler import scheduler
 
 moment = Moment(app)
@@ -21,9 +20,8 @@ def home():
 @app.route('/index')
 @login_required
 def index():
-    session.pop('_flashes', None)
-    flash(Test().test())
-    return render_template("index.html")
+    counts = CountInfo.query.all()
+    return render_template("index.html", counts=counts)
 
 
 @app.route('/login', methods=['GET', 'POST'])

@@ -6,8 +6,9 @@
 {% block styles %}
 {{ super() }}
 <!-- Morris Charts CSS -->
-<link rel="stylesheet" href="{{url_for('static', filename='morrisjs/morris.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='vendor/morrisjs/morris.css')}}">
 <link rel="stylesheet" href="{{url_for('static', filename='css/guozijian.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='vendor/bootstrap-table/bootstrap-table.css')}}">
 {% endblock %}
 
 {% block page_content %}
@@ -30,16 +31,18 @@
             </div>
             <!-- /.panel-heading -->
             <div class="panel-body">
-                <div class="row">
-                    <div class="col-lg-4">
+                <div class="row row-eq-height">
+                    <div class="col-lg-5">
                         <div class="table-responsive">
-                            <table class="table table-bordered table-hover table-striped">
+                            <table id="table" class="table table-bordered table-hover table-striped" data-toggle="table"
+                                   data-search="true" data-striped="true" data-page-size="5"
+                                   data-pagination="true" data-query-params="queryParams">
                                 <thead>
                                 <tr>
                                     <th>Id</th>
                                     <th>Date</th>
                                     <th>Time</th>
-                                    <th>Amount</th>
+                                    <th>Counts</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -85,19 +88,13 @@
                                     <td>2:15 PM</td>
                                     <td>$5663.54</td>
                                 </tr>
-                                <tr>
-                                    <td>3319</td>
-                                    <td>10/21/2013</td>
-                                    <td>2:13 PM</td>
-                                    <td>$943.45</td>
-                                </tr>
                                 </tbody>
                             </table>
                         </div>
                         <!-- /.table-responsive -->
                     </div>
                     <!-- /.col-lg-4 (nested) -->
-                    <div class="col-lg-8">
+                    <div class="col-lg-7">
                         <div id="morris-bar-chart"></div>
                     </div>
                     <!-- /.col-lg-8 (nested) -->
@@ -115,14 +112,31 @@
             <div class="panel-heading">
                 <i class="fa fa-bar-chart-o fa-fw"></i> List Example
             </div>
-            <div>
-                <div class="list-group">
-                    <a href="#" class="list-group-item">Action</a>
-                    <a href="#" class="list-group-item">Another action</a>
-                    <a href="#" class="list-group-item">Something else here</a>
-                    <a href="#" class="list-group-item">Separated link</a>
-                </div>
+            <div class="list-group">
+                <a href="#" class="list-group-item">Action</a>
+                <a href="#" class="list-group-item">Another action</a>
+                <a href="#" class="list-group-item">Something else here</a>
+                <a href="#" class="list-group-item">Separated link</a>
             </div>
+            <ul class="pagination bottom-aligned">
+                <li class="page-item">
+                    <a class="page-link" href="#" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                </li>
+                <li class="page-item"><a class="page-link" href="#">1</a></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item"><a class="page-link" href="#">4</a></li>
+                <li class="page-item"><a class="page-link" href="#">5</a></li>
+                <li class="page-item">
+                    <a class="page-link" href="#" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </li>
+            </ul>
         </div>
     </div>
     <div class="col-lg-6 col-md-6">
@@ -130,7 +144,7 @@
             <div class="panel-heading">
                 <i class="fa fa-bar-chart-o fa-fw"></i> Image Example
             </div>
-            <img src="https://assets.servedby-buysellads.com/p/manage/asset/id/28536"
+            <img src="{{ counts[0].uri }}"
                  class="img-responsive img-rounded fixed-img"/>
         </div>
         <!-- /.col-lg-4 -->
@@ -152,8 +166,6 @@
         <div class="panel panel-primary">
             <div class="panel-heading">
                 <i class="fa fa-bar-chart-o fa-fw"></i> Area Chart Example
-                <div class="pull-right">
-                </div>
             </div>
             <!-- /.panel-heading -->
             <div class="panel-body">
@@ -171,8 +183,9 @@
 {% block scripts %}
 {{ super() }}
 <!-- Morris Charts JavaScript -->
-<script type=text/javascript src="{{url_for('static', filename='raphael/raphael.min.js')}}"></script>
-<script type=text/javascript src="{{url_for('static', filename='morrisjs/morris.min.js')}}"></script>
+<script type=text/javascript src="{{url_for('static', filename='vendor/raphael/raphael.min.js')}}"></script>
+<script type=text/javascript src="{{url_for('static', filename='vendor/morrisjs/morris.min.js')}}"></script>
+<script type=text/javascript src="{{url_for('static', filename='vendor/bootstrap-table/bootstrap-table.js')}}"></script>
 <script type=text/javascript src="{{url_for('static', filename='data/morris-data.js')}}"></script>
 <script type=text/javascript src="{{url_for('static', filename='js/guozijian.js')}}"></script>
 {% endblock scripts %}
