@@ -2,6 +2,11 @@ import requests
 from PIL import Image
 from io import BytesIO
 import time
+import os
+import datetime
+
+from guozijian import APP_IMG_SAV_PATH, db
+from guozijian.models import CountInfo
 
 class VideoService:
     get_token_params = {'appKey': 'a48e330633804b81bd330b0a375db879', 'appSecret': '24597738ce4b615837d10ca3342ba7db'}
@@ -67,6 +72,15 @@ class VideoException (Exception):
 class Test:
     def test(self):
         return "test"
+
+    def save_to_db(self):
+        name = "test.jpg"
+        uri =  os.path.join(APP_IMG_SAV_PATH, name)
+        count = CountInfo(name, uri, datetime.datetime.now(), 1)
+        db.session.add(count)
+        db.session.flush()
+        db.session.commit()
+
 
 
 

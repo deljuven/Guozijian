@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import os
 from flask import Flask
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
@@ -13,6 +14,8 @@ app.config['SQLALCHEMY_DATABASE_URI'] = DB_URI
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 # app.debug = True;
 # app.use_reloader = True;
+
+APP_IMG_SAV_PATH= os.path.join(app.instance_path, 'static','data','img')
 
 bootstrap = Bootstrap(app)
 
