@@ -21,6 +21,43 @@
     </div>
     <!-- /.col-lg-12 -->
 </div>
+
+<div class="row">
+    <div class="col-lg-12 col-md-12">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <i class="fa fa-bar-chart-o fa-fw"></i> Image Example
+            </div>
+            <div class="panel-body">
+                <div class="row row-eq-height">
+                    <div class="col-lg-5 col-md-5">
+                        <div class="table-responsive">
+                            <table id="table" class="table table-bordered table-hover table-striped" data-toggle="table"
+                                   data-search="true" data-striped="true" data-page-size="10" data-page-list="[10]"
+                                   data-side-pagination="server" data-ajax="loadCounts" data-pagination="true"
+                                   data-query-params="queryParams">
+                                <thead>
+                                <tr>
+                                    <th data-field="id">Id</th>
+                                    <th data-field="name">Name</th>
+                                    <th data-field="taken_at">Time</th>
+                                    <th data-field="count">Counts</th>
+                                </tr>
+                                </thead>
+                            </table>
+                        </div>
+                        <!-- /.table-responsive -->
+                    </div>
+                    <div class="col-lg-7 col-md-7">
+                        <img id="gallery" src="{{ counts[0].uri }}"
+                             class="img-responsive img-rounded fixed-img"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="row">
     <div class="col-lg-12 col-md-12">
         <div class="panel panel-primary">
@@ -30,142 +67,29 @@
                 </div>
             </div>
             <!-- /.panel-heading -->
-            <div class="panel-body">
-                <div class="row row-eq-height">
-                    <div class="col-lg-5">
-                        <div class="table-responsive">
-                            <table id="table" class="table table-bordered table-hover table-striped" data-toggle="table"
-                                   data-search="true" data-striped="true" data-page-size="5"
-                                   data-pagination="true" data-query-params="queryParams">
-                                <thead>
-                                <tr>
-                                    <th>Id</th>
-                                    <th>Date</th>
-                                    <th>Time</th>
-                                    <th>Counts</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr>
-                                    <td>3326</td>
-                                    <td>10/21/2013</td>
-                                    <td>3:29 PM</td>
-                                    <td>$321.33</td>
-                                </tr>
-                                <tr>
-                                    <td>3325</td>
-                                    <td>10/21/2013</td>
-                                    <td>3:20 PM</td>
-                                    <td>$234.34</td>
-                                </tr>
-                                <tr>
-                                    <td href="baidu.com">3324</td>
-                                    <td>10/21/2013</td>
-                                    <td>3:03 PM</td>
-                                    <td>$724.17</td>
-                                </tr>
-                                <tr>
-                                    <td>3323</td>
-                                    <td>10/21/2013</td>
-                                    <td>3:00 PM</td>
-                                    <td>$23.71</td>
-                                </tr>
-                                <tr>
-                                    <td>3322</td>
-                                    <td>10/21/2013</td>
-                                    <td>2:49 PM</td>
-                                    <td>$8345.23</td>
-                                </tr>
-                                <tr>
-                                    <td>3321</td>
-                                    <td>10/21/2013</td>
-                                    <td>2:23 PM</td>
-                                    <td>$245.12</td>
-                                </tr>
-                                <tr>
-                                    <td>3320</td>
-                                    <td>10/21/2013</td>
-                                    <td>2:15 PM</td>
-                                    <td>$5663.54</td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <!-- /.table-responsive -->
+            <div class="row row-eq-height">
+                <div class="col-lg-4 col-md-4">
+                    <div class="panel panel-default panel-eq-height">
+                        <div id="morris-donut-chart"></div>
+                        <!-- /.panel-body -->
                     </div>
-                    <!-- /.col-lg-4 (nested) -->
-                    <div class="col-lg-7">
-                        <div id="morris-bar-chart"></div>
-                    </div>
-                    <!-- /.col-lg-8 (nested) -->
+                    <!-- /.panel -->
                 </div>
-                <!-- /.row -->
+                <div class="col-lg-8">
+                    <div id="morris-bar-chart"></div>
+                </div>
             </div>
-            <!-- /.panel-body -->
         </div>
         <!-- /.panel -->
     </div>
-</div>
-<div class="row row-eq-height">
-    <div class="col-lg-3 col-md-3">
-        <div class="panel panel-default panel-eq-height">
-            <div class="panel-heading">
-                <i class="fa fa-bar-chart-o fa-fw"></i> List Example
-            </div>
-            <div class="list-group">
-                <a href="#" class="list-group-item">Action</a>
-                <a href="#" class="list-group-item">Another action</a>
-                <a href="#" class="list-group-item">Something else here</a>
-                <a href="#" class="list-group-item">Separated link</a>
-            </div>
-            <ul class="pagination bottom-aligned">
-                <li class="page-item">
-                    <a class="page-link" href="#" aria-label="Previous">
-                        <span aria-hidden="true">&laquo;</span>
-                        <span class="sr-only">Previous</span>
-                    </a>
-                </li>
-                <li class="page-item"><a class="page-link" href="#">1</a></li>
-                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                <li class="page-item"><a class="page-link" href="#">4</a></li>
-                <li class="page-item"><a class="page-link" href="#">5</a></li>
-                <li class="page-item">
-                    <a class="page-link" href="#" aria-label="Next">
-                        <span aria-hidden="true">&raquo;</span>
-                        <span class="sr-only">Next</span>
-                    </a>
-                </li>
-            </ul>
-        </div>
-    </div>
-    <div class="col-lg-6 col-md-6">
-        <div class="panel panel-default panel-eq-height">
-            <div class="panel-heading">
-                <i class="fa fa-bar-chart-o fa-fw"></i> Image Example
-            </div>
-            <img src="{{ counts[0].uri }}"
-                 class="img-responsive img-rounded fixed-img"/>
-        </div>
-        <!-- /.col-lg-4 -->
-    </div>
-    <div class="col-lg-3 col-md-">
-        <div class="panel panel-default panel-eq-height">
-            <div class="panel-heading">
-                <i class="fa fa-bar-chart-o fa-fw"></i> Donut Chart Example
-            </div>
-            <div id="morris-donut-chart"></div>
-            <!-- /.panel-body -->
-        </div>
-        <!-- /.panel -->
-    </div>
+    <!-- /.col-lg-4 (nested) -->
 </div>
 
 <div class="row">
     <div class="col-lg-12">
         <div class="panel panel-primary">
             <div class="panel-heading">
-                <i class="fa fa-bar-chart-o fa-fw"></i> Area Chart Example
+                <i class="fa fa-bar-chart-o fa-fw"></i>过去3天的统计
             </div>
             <!-- /.panel-heading -->
             <div class="panel-body">

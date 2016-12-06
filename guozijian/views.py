@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 from flask import render_template, redirect, url_for, request, jsonify
 from flask_login import login_required
 from flask_moment import Moment
@@ -6,7 +7,7 @@ from flask_moment import Moment
 from guozijian import app, db, login_manager
 from login import signin, signout, signup
 from models import User, LoginForm, RegistrationForm, CountInfo
-from scheduler import scheduler
+from utils import PER_PAGE
 
 moment = Moment(app)
 
@@ -53,6 +54,18 @@ def register():
 def logout():
     signout()
     return redirect(url_for('index'))
+
+
+@app.route('/counts')
+@login_required
+def counts():
+    page = request.args.get('page')
+    app.logger.info(page)
+    data = CountInfo.query.paginate(page=page, per_page=PER_PAGE)
+    # cur_page = json.dumps([obj.__dict__ for obj in data.items])
+    app.logger.info(data.items)
+    return jsonify(total=data.total, data=[i.serialize for i in data.items])
+    # return render_template("teacherSelector.html", pagination=data)
 
 
 @app.route('/flot')

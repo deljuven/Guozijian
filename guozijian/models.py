@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import json
+
 from flask_user import UserMixin
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, validators, BooleanField
@@ -37,6 +39,14 @@ class User(db.Model, UserMixin):
     def __repr__(self):
         return '<User %r>' % {'name': self.name.encode(), 'email': self.email.encode()}
 
+    @property
+    def serialize(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "email": self.email
+        }
+
     def is_authenticated(self):
         return True
 
@@ -68,5 +78,15 @@ class CountInfo(db.Model):
         self.count = count
 
     def __repr__(self):
-        return '<User %r>' % {'name': self.name.encode(), 'uri': self.uri.encode()}
+        # return '<Count %r>' % {'name': self.name.encode(), 'uri': self.uri.encode()}
+        return json.dumps(self.__dict__)
 
+    @property
+    def serialize(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "uri": self.uri,
+            "taken_at": self.taken_at.strftime("%Y-%m-%d %H:%M"),
+            "count": self.count
+        }
