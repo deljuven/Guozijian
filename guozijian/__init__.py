@@ -8,7 +8,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_user import LoginManager
 from sqlalchemy.exc import IntegrityError
 
-from scheduler import init_scheduler, add_schedule, scheduler
+from scheduler import init_scheduler, add_job, scheduler
 from utils import DB_URI, SQLITE_URI
 
 app = Flask(__name__)
@@ -51,7 +51,7 @@ with app.app_context():
         app.logger.info(ex.message)
 
 init_scheduler()
-add_schedule()
+# add_job()
 # scheduler.start()
 
 import guozijian.views

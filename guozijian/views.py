@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import os
-from datetime import datetime
-
 from flask import render_template, redirect, url_for, request, jsonify
 from flask_login import login_required
 from flask_moment import Moment
@@ -105,12 +102,8 @@ def testdb():
 
 @app.route('/snapshot')
 @login_required
-def snapshot():
-    vs = VideoService()
-    url = vs.take_picture()
-    detector = ImageDetector(url)
-    faces = detector.detect(4)
-    detector.save_to_db(faces)
+def onSnapshot():
+    snapshot()
     return jsonify(title="hello world")
 
 
@@ -121,9 +114,9 @@ def latest():
     return jsonify([i.serialize for i in latest])
 
 
-def save_to_db(self, face_count):
-    name = os.path.basename(self.file_path)
-    count = CountInfo(name, self.file_path, datetime.now(), face_count)
-    db.session.add(count)
-    db.session.flush()
-    db.session.commit()
+def snapshot():
+    vs = VideoService()
+    url = vs.take_picture()
+    detector = ImageDetector(url)
+    faces = detector.detect(4)
+    detector.save_to_db(faces)

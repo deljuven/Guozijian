@@ -30,9 +30,10 @@ function reanderArea(counts) {
         pointSize: 2,
         hideHover: 'auto',
         resize: true,
-        xLabelFormat: function (x) {
-            return x.yyyymmmddMMHH();
-        }
+        parseTime: false,
+        // xLabelFormat: function (x) {
+        //     return x.yyyymmmddMMHH();
+        // }
     });
 }
 
@@ -52,7 +53,7 @@ function renderBar(counts) {
         ykeys: ['count'],
         labels: ['Count'],
         hideHover: 'auto',
-        resize: true
+        resize: true,
     });
 }
 
