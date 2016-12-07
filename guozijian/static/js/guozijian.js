@@ -8,19 +8,15 @@ function ping() {
     console.log("ping");
 }
 
-function queryParams() {
-    return {
-        per_page: 5,
-        page: 1
-    };
-}
-
 function loadCounts(params) {
-    $.get("counts", function (data) {
+    $.get("counts", params.data).done(function (data) {
+        renderBar(data.data);
+        reanderArea(data.data);
+        renderDonut(data.data[0]);
         params.success({
-            "total": data.total,
-            "rows": data.data
-        });
+            total: data.total,
+            rows: data.data
+        })
     });
 }
 

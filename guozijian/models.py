@@ -78,8 +78,8 @@ class CountInfo(db.Model):
         self.count = count
 
     def __repr__(self):
-        # return '<Count %r>' % {'name': self.name.encode(), 'uri': self.uri.encode()}
-        return json.dumps(self.__dict__)
+        return '<Count %r>' % {'name': self.name.encode(), 'uri': self.uri.encode()}
+        # return json.dumps(self.__dict__)
 
     @property
     def serialize(self):

@@ -1,19 +1,18 @@
 # -*- coding: utf-8 -*-
 
+import os
+from datetime import datetime
+
 from flask import render_template, redirect, url_for, request, jsonify
 from flask_login import login_required
 from flask_moment import Moment
 
+from face.ImageDetector import ImageDetector
 from guozijian import app, db, login_manager
 from login import signin, signout, signup
 from models import User, LoginForm, RegistrationForm, CountInfo
 from utils import PER_PAGE
 from video.VideoService import VideoService
-from face.ImageDetector import  ImageDetector
-from datetime import datetime
-from scheduler import scheduler
-
-import os
 
 moment = Moment(app)
 
@@ -65,13 +64,10 @@ def logout():
 @app.route('/counts')
 @login_required
 def counts():
-    page = request.args.get('page')
-    app.logger.info(page)
+    offset = request.args.get('offset', type=int)
+    page = offset / PER_PAGE + 1
     data = CountInfo.query.paginate(page=page, per_page=PER_PAGE)
-    # cur_page = json.dumps([obj.__dict__ for obj in data.items])
-    app.logger.info(data.items)
     return jsonify(total=data.total, data=[i.serialize for i in data.items])
-    # return render_template("teacherSelector.html", pagination=data)
 
 
 @app.route('/flot')
@@ -113,9 +109,16 @@ def snapshot():
     vs = VideoService()
     url = vs.take_picture()
     detector = ImageDetector(url)
-    faces = detector.detect()
+    faces = detector.detect(4)
     detector.save_to_db(faces)
     return jsonify(title="hello world")
+
+
+@app.route('/latest')
+@login_required
+def latest():
+    latest = CountInfo.query.order_by(CountInfo.taken_at.desc()).limit(100).all()
+    return jsonify([i.serialize for i in latest])
 
 
 def save_to_db(self, face_count):

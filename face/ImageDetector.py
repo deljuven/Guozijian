@@ -1,18 +1,19 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 
-from facepp import API,File
+import os
+import time
+from datetime import datetime
+from io import BytesIO
+
 import requests
 from PIL import Image, ImageDraw
-from video.VideoService import VideoService
-from video.VideoException import VideoException
-from io import BytesIO
-from guozijian.models import CountInfo
-from guozijian import APP_IMG_SAV_PATH, db
 
-from datetime import datetime
-import time
-import os
+from facepp import API, File
+from guozijian import APP_IMG_SAV_PATH, db, APP_PATH
+from guozijian.models import CountInfo
+from video.VideoException import VideoException
+from video.VideoService import VideoService
 
 API_KEY = '185839fab47af2675b5e458275215a39'
 API_SECRET = 'x7EXrX4c5WgIjAQ9un3SgI4-QYTad7Dx'
@@ -22,6 +23,7 @@ class ImageDetector:
     ''' Image Detector class demo'''
     file_path = None
     api = None
+
     def __init__(self, img_url):
         picture_result = requests.get(img_url)
         img = Image.open(BytesIO(picture_result.content))
@@ -31,7 +33,7 @@ class ImageDetector:
         self.file_path = path
         self.api = API(API_KEY, API_SECRET)
 
-    def detect(self):
+    def detect(self, width=5):
         file = File(self.file_path)
         middle_result = self.api.detection.detect(img=file)
         result = self.api.wait_async(middle_result["session_id"])
@@ -52,26 +54,29 @@ class ImageDetector:
             y0 = (center_y - 0.5 * height) * img_height * 0.01
             x1 = (center_x + 0.5 * width) * img_width * 0.01
             y1 = (center_y + 0.5 * height) * img_height * 0.01
-            #down
-            draw.line([x0, y0, x1, y0], fill='red', width=6)
-            #up
-            draw.line([x0, y1, x1, y1], fill='red', width=6)
-            #left
-            draw.line([x0, y0, x0, y1], fill='red', width=6)
-            #right
-            draw.line([x1, y0, x1, y1], fill='red', width=6)
+            # # down
+            # draw.line([x0, y0, x1, y0], fill='red', width=width)
+            # # up
+            # draw.line([x0, y1, x1, y1], fill='red', width=width)
+            # # left
+            # draw.line([x0, y0, x0, y1], fill='red', width=width)
+            # # right
+            # draw.line([x1, y0, x1, y1], fill='red', width=width)
+            draw.rectangle([x0, y0, x1, y1], outline='red')
         del draw
         image.save(self.file_path)
 
-        #return: face counts
+        # return: face counts
         return face_counts
 
     def save_to_db(self, face_count):
         name = os.path.basename(self.file_path)
-        count = CountInfo(name, self.file_path, datetime.now(), face_count)
+        path = os.path.relpath(self.file_path, APP_PATH)
+        count = CountInfo(name, path, datetime.now(), face_count)
         db.session.add(count)
         db.session.flush()
         db.session.commit()
+
 
 if __name__ == '__main__':
     try:

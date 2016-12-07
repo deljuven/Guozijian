@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+
 from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
 from apscheduler.schedulers.background import BackgroundScheduler
 
@@ -22,6 +23,14 @@ def init_scheduler():
 
 def pong():
     print datetime.now()
+
+
+def add_daily_scheduler():
+    scheduler.add_job(add_daily_job, 'cron', year="*", month="*", day_of_week="1-5", hour="0", minute="0", second="0")
+
+
+def add_daily_job():
+    pass
 
 
 def add_schedule():

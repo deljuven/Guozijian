@@ -34,8 +34,7 @@
                         <div class="table-responsive">
                             <table id="table" class="table table-bordered table-hover table-striped" data-toggle="table"
                                    data-search="true" data-striped="true" data-page-size="10" data-page-list="[10]"
-                                   data-side-pagination="server" data-ajax="loadCounts" data-pagination="true"
-                                   data-query-params="queryParams">
+                                   data-side-pagination="server" data-ajax="loadCounts" data-pagination="true">
                                 <thead>
                                 <tr>
                                     <th data-field="id">Id</th>
@@ -110,6 +109,6 @@
 <script type=text/javascript src="{{url_for('static', filename='vendor/raphael/raphael.min.js')}}"></script>
 <script type=text/javascript src="{{url_for('static', filename='vendor/morrisjs/morris.min.js')}}"></script>
 <script type=text/javascript src="{{url_for('static', filename='vendor/bootstrap-table/bootstrap-table.js')}}"></script>
-<script type=text/javascript src="{{url_for('static', filename='data/morris-data.js')}}"></script>
+<script type=text/javascript src="{{url_for('static', filename='js/morris.js')}}"></script>
 <script type=text/javascript src="{{url_for('static', filename='js/guozijian.js')}}"></script>
 {% endblock scripts %}
