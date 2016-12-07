@@ -37,5 +37,5 @@ def add_daily_job():
 def add_job(start_date, end_date, interval=5):
     if end_date < datetime.now():
         return
-    scheduler.add_job(pong, 'interval', minutes=interval, start_date=max([start_date, datetime.now()]),
+    scheduler.add_job(snapshot, 'interval', minutes=interval, start_date=max([start_date, datetime.now()]),
                       end_date=end_date)

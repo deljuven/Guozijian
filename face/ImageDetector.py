@@ -1,19 +1,14 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 
-import os
 import time
-from datetime import datetime
 from io import BytesIO
 
 import requests
 from PIL import Image, ImageDraw
 
 from facepp import API, File
-from guozijian import APP_IMG_SAV_PATH, db, APP_PATH
-from guozijian.models import CountInfo
-from video.VideoException import VideoException
-from video.VideoService import VideoService
+from guozijian import APP_IMG_SAV_PATH
 
 API_KEY = '185839fab47af2675b5e458275215a39'
 API_SECRET = 'x7EXrX4c5WgIjAQ9un3SgI4-QYTad7Dx'
@@ -69,21 +64,12 @@ class ImageDetector:
         # return: face counts
         return face_counts
 
-    def save_to_db(self, face_count):
-        name = os.path.basename(self.file_path)
-        path = os.path.relpath(self.file_path, APP_PATH)
-        count = CountInfo(name, path, datetime.now(), face_count)
-        db.session.add(count)
-        db.session.flush()
-        db.session.commit()
-
-
-if __name__ == '__main__':
-    try:
-        vs = VideoService()
-        url = vs.take_picture()
-        detector = ImageDetector(url)
-        faces = detector.detect()
-        detector.save_to_db(faces)
-    except VideoException as e:
-        print e.msg
+# if __name__ == '__main__':
+#     try:
+#         vs = VideoService()
+#         url = vs.take_picture()
+#         detector = ImageDetector(url)
+#         faces = detector.detect()
+#         detector.save_to_db(faces)
+#     except VideoException as e:
+#         print e.msg

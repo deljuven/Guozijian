@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
 
+import os
+from datetime import datetime
+
 from flask import render_template, redirect, url_for, request, jsonify
 from flask_login import login_required
 from flask_moment import Moment
 
 from face.ImageDetector import ImageDetector
-from guozijian import app, db, login_manager
+from guozijian import app, db, login_manager, APP_PATH
 from login import signin, signout, signup
 from models import User, LoginForm, RegistrationForm, CountInfo
 from utils import PER_PAGE
@@ -119,4 +122,13 @@ def snapshot():
     url = vs.take_picture()
     detector = ImageDetector(url)
     faces = detector.detect(4)
-    detector.save_to_db(faces)
+    save_to_db(detector, faces)
+
+
+def save_to_db(detector, face_count):
+    name = os.path.basename(detector.file_path)
+    path = os.path.relpath(detector.file_path, APP_PATH)
+    count = CountInfo(name, path, datetime.now(), face_count)
+    db.session.add(count)
+    db.session.flush()
+    db.session.commit()
