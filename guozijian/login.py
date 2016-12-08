@@ -13,11 +13,13 @@ def signin(username, passwd, form):
         flash("Incorrect username or password")
         return False
     login_user(user)
+    session['logged_in'] = True
     return True
 
 
 def signout():
     logout_user()
+    session.pop('logged_in', None)
 
 
 def signup(username, passwd, email):

@@ -7,14 +7,34 @@ from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 from flask_user import LoginManager
 from sqlalchemy.exc import IntegrityError
+from werkzeug.wrappers import Request
 
 from scheduler import init_scheduler, add_job, scheduler
 from utils import DB_URI, SQLITE_URI
+
+
+class MethodRewriteMiddleware(object):
+    def __init__(self, app, input_name='_method'):
+        self.app = app
+        self.input_name = input_name
+
+    def __call__(self, environ, start_response):
+        request = Request(environ)
+
+        if self.input_name in request.form:
+            method = request.form[self.input_name].upper()
+
+            if method in ['GET', 'POST', 'PUT', 'DELETE']:
+                environ['REQUEST_METHOD'] = method
+
+        return self.app(environ, start_response)
+
 
 app = Flask(__name__)
 # app.config['SQLALCHEMY_DATABASE_URI'] = DB_URI
 app.config['SQLALCHEMY_DATABASE_URI'] = SQLITE_URI
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
+app.wsgi_app = MethodRewriteMiddleware(app.wsgi_app)
 # app.debug = True;
 # app.use_reloader = True;
 

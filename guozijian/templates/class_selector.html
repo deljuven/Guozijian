@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block styles %}
+{{ super() }}
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="{{url_for('static', filename='vendor/bootstrap-table/bootstrap-table.css')}}">
+<script type=text/javascript src="{{url_for('static', filename='vendor/bootstrap-table/bootstrap-table.js')}}"></script>
+<link rel="stylesheet" href="{{url_for('static', filename='vendor/bootstrap-select/css/bootstrap-select.min.css')}}">
+{% endblock %}
+
+{% block page_content %}
+<div class="row">
+    <div class="col-lg-12 col-md-12">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <i class="fa fa-bar-chart-o fa-fw"></i> Image Example
+            </div>
+            <div class="panel-body">
+                <div class="row row-eq-height">
+                    <div class="col-lg-5 col-md-5">
+                        <div class="table-responsive">
+                            <table id="table" class="table table-bordered table-hover table-striped" data-toggle="table"
+                                   data-search="true" data-striped="true" data-page-size="10" data-page-list="[10]"
+                                   data-side-pagination="server" data-ajax="loadCounts" data-pagination="true">
+                                <thead>
+                                <tr>
+                                    <th data-field="id">Id</th>
+                                    <th data-field="name">Name</th>
+                                    <th data-field="taken_at">Time</th>
+                                    <th data-field="count">Counts</th>
+                                </tr>
+                                </thead>
+                            </table>
+                        </div>
+                        <!-- /.table-responsive -->
+                    </div>
+                    <div class="col-lg-7 col-md-7">
+                        <img id="gallery" src="{{ counts[0].uri }}"
+                             class="img-responsive img-rounded fixed-img"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{  super() }}
+<!-- Latest compiled and minified JavaScript -->
+<script type=text/javascript
+        src="{{url_for('static', filename='vendor/bootstrap-select/js/bootstrap-select.min.js')}}"></script>
+
+<!-- (Optional) Latest compiled and minified JavaScript translation files -->
+<script type=text/javascript
+        src="{{url_for('static', filename='vendor/bootstrap-select/js/i18n/defaults-zh_CN.min.js')}}"></script>
+<script type=text/javascript
+        src="{{url_for('static', filename='vendor/bootstrap-select/js/i18n/defaults-en_US.min.js')}}"></script>
+
+{% endblock %}

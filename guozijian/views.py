@@ -1,20 +1,20 @@
 # -*- coding: utf-8 -*-
 
-import os
-from datetime import datetime
-
 from flask import render_template, redirect, url_for, request, jsonify
 from flask_login import login_required
 from flask_moment import Moment
 
-from face.ImageDetector import ImageDetector
-from guozijian import app, db, login_manager, APP_PATH
+from guozijian import app, login_manager
 from login import signin, signout, signup
-from models import User, LoginForm, RegistrationForm, CountInfo
+from models import User, LoginForm, RegistrationForm, CountInfo, ClassInfo, ClassForm
+from service import test_db, snapshot, add_class, delete_class
 from utils import PER_PAGE
-from video.VideoService import VideoService
 
 moment = Moment(app)
+
+
+def redirect_url(default='index'):
+    return request.args.get('next') or request.referrer or url_for(default)
 
 
 @app.route('/')
@@ -70,14 +70,50 @@ def counts():
     return jsonify(total=data.total, data=[i.serialize for i in data.items])
 
 
-@app.route('/flot')
-def flot():
-    return render_template("flot.html")
+@app.route('/class', methods=['GET', 'POST', 'PUT', 'DELETE'])
+def class_():
+    form = ClassForm()
+    class_id = request.args.get('class', type=int)
+    name = form.name
+    begin = form.begin
+    end = form.end
+    days_of_week = form.days_of_week
+    total = form.total
+    app.logger.info(name.data)
+    app.logger.info(begin.data)
+    app.logger.info(end.data)
+    app.logger.info(days_of_week.data)
+    app.logger.info(total.data)
+    if request.method == 'POST' and form.validate_on_submit():
+        add_class(name=name.data, begin=begin.data, end=end.data, days_of_week=days_of_week.data, total=total.data)
+        return redirect(url_for('class_list'))
+    elif request.method == 'PUT' and form.validate_on_submit():
+        # class_info = update_class(id=class_id, name=name.data, begin=begin.data, end=end.data,
+        #                           days_of_week=days_of_week.data, total=total.data)
+        # return render_template("class_modifier.html", form=form, class_info=class_info)
+        app.logger.info(form.days_of_week.data)
+    elif request.method == 'GET':
+        if class_id is None:
+            return redirect(url_for('class_list'))
+        class_info = ClassInfo.query.get(class_id)
+        return render_template("class_modifier.html", form=form, class_info=class_info)
+    elif request.method == 'DELETE':
+        if class_id is None:
+            return redirect(url_for('class_list'))
+        delete_class(class_id)
+        return redirect(url_for('class_list'))
 
 
-@app.route('/morris')
-def morris():
-    return render_template("morris.html")
+@app.route('/class_list')
+def class_list():
+    class_list = ClassInfo.query.all()
+    return render_template("class_list.html", class_list=class_list)
+
+
+@app.route('/classes')
+def classes():
+    class_list = ClassInfo.query.all()
+    return jsonify(class_list)
 
 
 @app.errorhandler(404)
@@ -97,10 +133,7 @@ def test():
 
 @app.route('/testdb')
 def testdb():
-    if db.session.query("1").from_statement("SELECT 1").all():
-        return 'It works.'
-    else:
-        return 'Something is broken.'
+    return test_db()
 
 
 @app.route('/snapshot')
@@ -115,20 +148,3 @@ def onSnapshot():
 def latest():
     latest = CountInfo.query.order_by(CountInfo.taken_at.desc()).limit(100).all()
     return jsonify([i.serialize for i in latest])
-
-
-def snapshot():
-    vs = VideoService()
-    url = vs.take_picture()
-    detector = ImageDetector(url)
-    faces = detector.detect(4)
-    save_to_db(detector, faces)
-
-
-def save_to_db(detector, face_count):
-    name = os.path.basename(detector.file_path)
-    path = os.path.relpath(detector.file_path, APP_PATH)
-    count = CountInfo(name, path, datetime.now(), face_count)
-    db.session.add(count)
-    db.session.flush()
-    db.session.commit()

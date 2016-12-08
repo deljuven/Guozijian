@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% import "bootstrap/utils.html" as utils %}
-{% from "utils.html" import flash_message %}
+{% from "utils.html" import flash_message, render_field %}
 
 {% block title %}国子监-登录{% endblock %}
 
@@ -35,11 +35,12 @@
                 <div class="panel-body">
                     <form role="form" method="post" action="{{ url_for('login') }}">
                         <fieldset>
-                            {{ form.username.label }}
+                            {{ render_field(form.username) }}
                             <div class="form-group">
-                                {{ form.username(class_="form-control", placeholder="User Name", autofocus=true, required=true) }}
+                                {{ form.username(class_="form-control", placeholder="User Name", autofocus=true,
+                                required=true) }}
                             </div>
-                            {{ form.passwd.label }}
+                            {{ render_field(form.passwd) }}
                             <div class="form-group">
                                 {{ form.passwd(class_="form-control", required=true) }}
                             </div>
@@ -48,7 +49,6 @@
                                     <input name="remember" type="checkbox" value="Remember Me">Remember Me
                                 </label>
                             </div>
-                            {{ form.csrf_token }}
                             <!-- Change this to a button or input when using this as a form -->
                             <input type="submit" class="btn btn-lg btn-success btn-block"/>
                             {{ form.csrf_token }}

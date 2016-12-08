@@ -22,7 +22,7 @@ class ImageDetector:
     def __init__(self, img_url):
         picture_result = requests.get(img_url)
         img = Image.open(BytesIO(picture_result.content))
-        timestamp = time.strftime("%Y%m%d%H%M%S", time.localtime(time.time()))
+        timestamp = time.strftime("%Y%m%d-%H%M%S", time.localtime(time.time()))
         path = APP_IMG_SAV_PATH + '/' + timestamp + '.png'
         img.save(path)
         self.file_path = path

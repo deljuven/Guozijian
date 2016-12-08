@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% import "bootstrap/utils.html" as utils %}
-{% from "utils.html" import flash_message %}
+{% from "utils.html" import flash_message, render_field %}
 
 {% block title %}国子监-注册{% endblock %}
 
@@ -22,19 +22,6 @@
     </ul>
 </nav>
 {% endblock %}
-
-{% macro render_field(field) %}
-<dt>{{ field.label }}
-<dd>
-    {% if field.errors %}
-    <ul class=errors>
-        {% for error in field.errors %}
-        <li>{{ error }}</li>
-        {% endfor %}
-    </ul>
-    {% endif %}
-</dd>
-{% endmacro %}
 
 {% block content %}
 <div class="container">
@@ -72,7 +59,8 @@
                                     {{ form.accept_tos.label.text }}
                                     {% if form.accept_tos.errors %}
                                     {% for error in form.accept_tos.errors %}
-                                    <span style="color:#e50312;"><strong><em>{{ error }}</em></strong></span>{% endfor %}
+                                    <span style="color:#e50312;"><strong><em>{{ error }}</em></strong></span>{% endfor
+                                    %}
                                     {% endif %}
                                 </label>
                             </div>

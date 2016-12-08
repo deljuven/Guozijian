@@ -25,17 +25,18 @@ def pong():
     print datetime.now()
 
 
-def add_daily_scheduler():
-    scheduler.add_job(add_daily_job, 'cron', year="*", month="*", day_of_week="1-5", hour="0", minute="0", second="0",
-                      coalesce=True)
+def add_daily_scheduler(job):
+    scheduler.add_job(add_daily_job, 'cron', args=job, year="*", month="*", day_of_week="1-5", hour="0", minute="0",
+                      second="0", coalesce=True)
 
 
-def add_daily_job():
+def add_daily_job(job):
+    day_of_week = datetime.today().weekday()
     pass
 
 
-def add_job(start_date, end_date, interval=5):
+def add_job(job, start_date, end_date, interval=5):
     if end_date < datetime.now():
         return
-    scheduler.add_job(snapshot, 'interval', minutes=interval, start_date=max([start_date, datetime.now()]),
+    scheduler.add_job(job, 'interval', minutes=interval, start_date=max([start_date, datetime.now()]),
                       end_date=end_date)
