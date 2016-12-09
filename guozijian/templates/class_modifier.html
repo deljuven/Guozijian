@@ -13,99 +13,103 @@
 {% endblock %}
 
 {% block page_content %}
-<div class="container">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title">
-                        {% if class_info is none %}
-                        填写课程信息
-                        {% else %}
-                        修改课程信息
-                        {% endif %}
-                    </h3>
-                </div>
-                {{ flash_message() }}
-                <div class="panel-body">
-                    <form role="form" method="post" action="{{ url_for('class_') }}">
-                        {% if class_info is not none %}
-                        <input type="hidden" name="_method" value="PUT">
-                        {% endif %}
-                        <fieldset>
-                            {{ render_field(form.name) }}
-                            <div class="form-group">
-                                {% if class_info is none %}
-                                {{ form.name(class_="form-control",
-                                placeholder="数学课",
-                                autofocus=true, required=true) }}
+<div class="row">
+    <div class="col-lg-10">
+        <h1 class="page-header">
+            {% if class_info is defined and class_info is not none %}
+            修改课程信息
+            {% else %}
+            填写课程信息
+            {% endif %}
+        </h1>
+    </div>
+    <div class="col-md-8">
+        <div class="panel panel-default">
+            {{ flash_message() }}
+            <div class="panel-body">
+                <form role="form" method="post"
+                      {% if class_info is defined and class_info is not none %}
+                      action="{{ url_for('change_class', class_id=class_id) }}"
+                      {% else %}
+                      action="{{ url_for('new_class') }}"
+                      {% endif %}
+                      id="form">
+                    {% if class_info is defined and class_info is not none %}
+                    <input type="hidden" name="_method" value="PUT"/>
+                    <input type="hidden" name="_class" value="{{ class_info.class_id }}"/>
+                    <input type="hidden" id="_old" value="{{ class_info.days_of_week }}"/>
+                    {% endif %}
+                    <fieldset>
+                        {{ render_field(form.name) }}
+                        <div class="form-group">
+                            {% if class_info is defined and class_info is not none %}
+                            {{ form.name(class_="form-control",
+                            value=class_info.name|safe,
+                            autofocus=true, required=true) }}
+                            {% else %}
+                            {{ form.name(class_="form-control",
+                            placeholder="数学课",
+                            autofocus=true, required=true) }}
+                            {% endif %}
+                        </div>
+                        {{ render_field(form.begin) }}
+                        <div class="form-group">
+                            <div class="input-group bootstrap-timepicker timepicker">
+                                {% if class_info is defined and class_info is not none %}
+                                {{ form.begin(class_="form-control input-small", id="begin",
+                                value=class_info.begin|safe, autofocus=true, required=true) }}
                                 {% else %}
-                                {{ form.name(class_="form-control",
-                                value=class_info.name,
+                                {{ form.begin(class_="form-control input-small",id="begin", placeholder="00:00",
                                 autofocus=true, required=true) }}
                                 {% endif %}
+                                <span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
                             </div>
-                            {{ render_field(form.begin) }}
-                            <div class="form-group">
-                                {% if class_info is none %}
-                                {{ form.begin(class_="form-control",id="timepicker", placeholder="08:00",
-                                autofocus=true, required=true) }}
+                        </div>
+                        {{ render_field(form.end) }}
+                        <div class="form-group">
+                            <div class="input-group bootstrap-timepicker timepicker">
+                                {% if class_info is defined and class_info is not none %}
+                                {{ form.end(class_="form-control input-small", id="end",
+                                value=class_info.end|safe, autofocus=true, required=true) }}
                                 {% else %}
-                                {{ form.begin(class_="form-control",id="timepicker", value=class_info.begin,
+                                {{ form.end(class_="form-control input-small",id="end", placeholder="00:00",
                                 autofocus=true, required=true) }}
                                 {% endif %}
-                                <div class="input-group bootstrap-timepicker timepicker">
-                                    <input id="timepicker" type="text" class="form-control input-small"
-                                           data-provide="timepicker"
-                                           data-show-meridian="false">
-                                    <span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
-                                </div>
+                                <span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
                             </div>
-                            {{ render_field(form.end) }}
-                            <div class="form-group">
-                                {% if class_info is none %}
-                                {{ form.end(class_="form-control",
-                                placeholder="10:00",
-                                autofocus=true, required=true) }}
-                                {% else %}
-                                {{ form.end(class_="form-control",
-                                value=class_info.end, autofocus=true, required=true) }}
-                                {% endif %}
+                        </div>
+                        {{ render_field(form.days_of_week) }}
+                        <div class="form-group">
+                            {% if class_info is defined and class_info is not none %}
+                            {{ form.days_of_week(class_="form-control selectpicker", id="picker",autofocus=true,
+                            required=true) }}
+                            {% else %}
+                            {{ form.days_of_week(class_="form-control selectpicker",id="picker", autofocus=true,
+                            required=true) }}
+                            {% endif %}
+                        </div>
+                        {{ render_field(form.total) }}
+                        <div class="form-group">
+                            {% if class_info is defined and class_info is not none %}
+                            {{ form.total(class_="form-control", value=class_info.total, autofocus=true, required=true)
+                            }}
+                            {% else %}
+                            {{ form.total(class_="form-control", placeholder="10", autofocus=true, required=true) }}
+                            {% endif %}
+                        </div>
+                        <!-- Change this to a button or input when using this as a form -->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <input type="submit" class="btn btn-lg btn-success btn-block" value="提交"/>
                             </div>
-                            {{ render_field(form.days_of_week) }}
-                            <div class="form-group">
-                                {% if class_info is none %}
-                                {{ form.days_of_week( autofocus=true, required=true) }}
-                                {% else %}
-                                {{ form.days_of_week( autofocus=true, required=true) }}
-                                {% endif %}
+                            <div class="col-md-6">
+                                <input type="button" class="btn btn-lg btn-warning btn-block"
+                                       onclick="history.back();" value="后退"/>
                             </div>
-                            {{ render_field(form.total) }}
-                            <div class="form-group">
-                                {% if class_info is none %}
-                                {{ form.total(class_="form-control",
-                                placeholder="10",
-                                autofocus=true, required=true) }}
-                                {% else %}
-                                {{ form.total(class_="form-control",
-                                value=class_info.total,
-                                autofocus=true, required=true) }}
-                                {% endif %}
-                            </div>
-                            <!-- Change this to a button or input when using this as a form -->
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <input type="submit" class="btn btn-lg btn-success btn-block" value="提交"/>
-                                </div>
-                                <div class="col-md-6">
-                                    <input type="button" class="btn btn-lg btn-info btn-block"
-                                           onclick="history.back();" value="后退"/>
-                                </div>
-                            </div>
-                            {{ form.csrf_token }}
-                        </fieldset>
-                    </form>
-                </div>
+                        </div>
+                        {{ form.csrf_token }}
+                    </fieldset>
+                </form>
             </div>
         </div>
     </div>
@@ -126,5 +130,48 @@
 
 <script type=text/javascript
         src="{{url_for('static', filename='vendor/bootstrap-timepicker/js/bootstrap-timepicker.min.js')}}"></script>
+
+
+<script type=text/javascript>
+    $('#begin').timepicker({
+        showMeridian: false,
+        showInputs: false,
+        disableFocus: true
+    }).on('changeTime.timepicker', function (e) {
+        this.value = e.time.value;
+    });
+    ;
+    $('#end').timepicker({
+        showMeridian: false,
+        showInputs: false,
+        disableFocus: true
+    }).on('changeTime.timepicker', function (e) {
+        this.value = e.time.value;
+    });
+
+    {% if class_info is defined and class_info is not none %}
+    $('#picker').selectpicker("val", $.parseJSON($("#_old").val())).attr("multiple", true);
+    {% endif %}
+
+    function updateClass() {
+        var form = $("#form"), url = form.attr('action');
+        form.submit(function (event) {
+            /* stop form from submitting normally */
+            event.preventDefault();
+        });
+        if ($('#picker').val() != null) {
+            $.ajax({
+                url: url,
+                type: 'PUT',
+                data: form.serialize(),
+                success: function (data) {
+                    console.log(data);
+                }
+            });
+        }
+
+    }
+
+</script>
 
 {% endblock %}

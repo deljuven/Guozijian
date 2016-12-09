@@ -7,8 +7,8 @@ from flask_moment import Moment
 from guozijian import app, login_manager
 from login import signin, signout, signup
 from models import User, LoginForm, RegistrationForm, CountInfo, ClassInfo, ClassForm
-from service import test_db, snapshot, add_class, delete_class
-from utils import PER_PAGE
+from service import test_db, snapshot, delete_class, add_class, update_class
+from utils import PER_PAGE, WEEKDAY_MAP
 
 moment = Moment(app)
 
@@ -70,50 +70,61 @@ def counts():
     return jsonify(total=data.total, data=[i.serialize for i in data.items])
 
 
-@app.route('/class', methods=['GET', 'POST', 'PUT', 'DELETE'])
-def class_():
+@app.route('/classes', methods=['GET', 'POST'])
+def new_class():
     form = ClassForm()
-    class_id = request.args.get('class', type=int)
     name = form.name
     begin = form.begin
     end = form.end
     days_of_week = form.days_of_week
     total = form.total
-    app.logger.info(name.data)
-    app.logger.info(begin.data)
-    app.logger.info(end.data)
-    app.logger.info(days_of_week.data)
-    app.logger.info(total.data)
+    if request.method == 'GET':
+        return render_template("class_modifier.html", form=form)
+    days_of_week.data = [int(t.encode("ascii")) for t in days_of_week.data]
+    tmp = {t: WEEKDAY_MAP[t] for t in days_of_week.data}
     if request.method == 'POST' and form.validate_on_submit():
         add_class(name=name.data, begin=begin.data, end=end.data, days_of_week=days_of_week.data, total=total.data)
         return redirect(url_for('class_list'))
-    elif request.method == 'PUT' and form.validate_on_submit():
-        # class_info = update_class(id=class_id, name=name.data, begin=begin.data, end=end.data,
-        #                           days_of_week=days_of_week.data, total=total.data)
-        # return render_template("class_modifier.html", form=form, class_info=class_info)
-        app.logger.info(form.days_of_week.data)
-    elif request.method == 'GET':
-        if class_id is None:
-            return redirect(url_for('class_list'))
-        class_info = ClassInfo.query.get(class_id)
-        return render_template("class_modifier.html", form=form, class_info=class_info)
-    elif request.method == 'DELETE':
+    return render_template("class_modifier.html", form=form)
+
+
+@app.route('/classes/<class_id>', methods=['GET', 'POST', 'PUT', 'DELETE'])
+def change_class(class_id):
+    form = ClassForm()
+    name = form.name
+    begin = form.begin
+    end = form.end
+    days_of_week = form.days_of_week
+    total = form.total
+    class_info = ClassInfo.query.get(class_id)
+    if request.method == 'DELETE':
         if class_id is None:
             return redirect(url_for('class_list'))
         delete_class(class_id)
         return redirect(url_for('class_list'))
+    elif request.method == "GET":
+        return render_template("class_modifier.html", form=form, class_info=class_info, class_id=class_id)
+    days_of_week.data = [int(t.encode("ascii")) for t in days_of_week.data]
+    tmp = {t: WEEKDAY_MAP[t] for t in days_of_week.data}
+    if request.method == 'POST' and request.form['_method'] == 'PUT' and form.validate_on_submit():
+        class_info = update_class(class_id=class_id, name=name.data, begin=begin.data, end=end.data,
+                                  days_of_week=days_of_week.data, total=total.data)
+        return render_template("class_modifier.html", form=form, class_info=class_info, class_id=class_id)
+    elif request.method == 'PUT':
+        # class_info = update_class(id=class_id, name=name.data, begin=begin.data, end=end.data,
+        #                           days_of_week=days_of_week.data, total=total.data)
+        # return render_template("class_modifier.html", form=form, class_info=class_info)
+        # class_info = ClassInfo.query.get(class_id)
+        if form.validate_on_submit():
+            return "hello"
+        return jsonify(form.errors)
+    return render_template("class_modifier.html", form=form, class_info=class_info, class_id=class_id)
 
 
 @app.route('/class_list')
 def class_list():
-    class_list = ClassInfo.query.all()
-    return render_template("class_list.html", class_list=class_list)
-
-
-@app.route('/classes')
-def classes():
-    class_list = ClassInfo.query.all()
-    return jsonify(class_list)
+    class_list_ = ClassInfo.query.all()
+    return render_template("class_list.html", class_list=class_list_)
 
 
 @app.errorhandler(404)
@@ -138,7 +149,7 @@ def testdb():
 
 @app.route('/snapshot')
 @login_required
-def onSnapshot():
+def on_snapshot():
     snapshot()
     return jsonify(title="hello world")
 

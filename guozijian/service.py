@@ -41,15 +41,19 @@ def add_class(name, begin, end, days_of_week, total):
     return class_info
 
 
-def update_class(id__, name, begin, end, days_of_week, total):
-    class_info = ClassInfo.query.get(id__).update(
-        dict(name=name, begin=begin, end=end, days_of_week=days_of_week, total=total))
+def update_class(class_id, name, begin, end, days_of_week, total):
+    class_info = ClassInfo.query.get(class_id)
+    class_info.name = name
+    class_info.begin = begin
+    class_info.end = end
+    class_info.days_of_week = json.dumps(days_of_week)
+    class_info.total = total
     db.session.commit()
     return class_info
 
 
-def delete_class(id__):
-    ClassInfo.query.get(id__).delete()
+def delete_class(class_id):
+    ClassInfo.query.get(class_id).delete()
     db.session.commit()
 
 

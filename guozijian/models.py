@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
 
-import calendar
 import json
 
 from flask_user import UserMixin
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, validators, BooleanField, DateTimeField, IntegerField, ValidationError, \
-    SelectMultipleField, SelectField
+from wtforms import StringField, PasswordField, validators, BooleanField, IntegerField, SelectMultipleField
 
 from guozijian import db
+from utils import WEEKDAYS
 
 
 class LoginForm(FlaskForm):
@@ -29,7 +28,7 @@ class RegistrationForm(FlaskForm):
 
 class User(db.Model, UserMixin):
     __tablename__ = 'user'
-    id = db.Column("id", db.Integer, primary_key=True, autoincrement=True)
+    user_id = db.Column("id", db.Integer, primary_key=True, autoincrement=True)
     name = db.Column("name", db.String(100), unique=True, nullable=False)
     password = db.Column("passwd", db.String(100), nullable=False)
     email = db.Column("email", db.String(100), unique=True, nullable=False)
@@ -45,7 +44,7 @@ class User(db.Model, UserMixin):
     @property
     def serialize(self):
         return {
-            "id": self.id,
+            "id": self.user_id,
             "name": self.name,
             "email": self.email
         }
@@ -60,15 +59,15 @@ class User(db.Model, UserMixin):
         return False
 
     def get_id(self):
-        return "1"
+        return self.user_id
 
     def get(user_id):
-        pass
+        User.query.get(user_id)
 
 
 class CountInfo(db.Model):
     __tablename__ = 'count_info'
-    id = db.Column("id", db.Integer, primary_key=True, autoincrement=True)
+    count_id = db.Column("id", db.Integer, primary_key=True, autoincrement=True)
     name = db.Column("name", db.String(100), unique=True, nullable=False)
     uri = db.Column("uri", db.String(200), unique=True, nullable=False)
     taken_at = db.Column("taken_at", db.DateTime, nullable=False)
@@ -89,7 +88,7 @@ class CountInfo(db.Model):
     @property
     def serialize(self):
         return {
-            "id": self.id,
+            "id": self.count_id,
             "name": self.name,
             "uri": self.uri,
             "taken_at": self.taken_at.strftime("%Y-%m-%d %H:%M"),
@@ -99,13 +98,13 @@ class CountInfo(db.Model):
 
 class ClassInfo(db.Model):
     __tablename__ = 'class'
-    id = db.Column("id", db.Integer, primary_key=True, autoincrement=True)
+    class_id = db.Column("id", db.Integer, primary_key=True, autoincrement=True)
     name = db.Column("name", db.String(100), unique=True, nullable=False)
     begin = db.Column("begin_time", db.String(20), nullable=False)
     end = db.Column("end_time", db.String(20), nullable=False)
     days_of_week = db.Column("days_of_week", db.String(30), nullable=False)
     total = db.Column("total", db.Integer, nullable=False)
-    counts = db.relationship('CountInfo', backref='count_info', lazy="select")
+    counts = db.relationship('CountInfo', backref='count_info', lazy="dynamic")
 
     def __init__(self, name, begin, end, days_of_week, total):
         self.name = name
@@ -122,13 +121,13 @@ class ClassInfo(db.Model):
     @property
     def serialize(self):
         return {
-            "id": self.id,
+            "id": self.class_id,
             "name": self.name,
             "begin": self.begin,
             "end": self.end,
             "days_of_week": json.loads(self.days_of_week),
             "total": self.total,
-            "counts": [count.serialize() for count in self.counts]
+            "counts": [count.serialize for count in self.counts]
         }
 
 
@@ -136,30 +135,27 @@ def begin_end_validate(field_name=None, message=None):
     msg = "Begin should be before end" if message is None else message
 
     def _begin_end_validate(form, field):
-        try:
-            begin_field = form[field_name]
-        except KeyError:
-            raise ValidationError(field.gettext("Invalid field name '%s'.") % field_name)
-            # begin = begin_field.data.split(":")
-            # end = field.data.split(":")
-            # if not (int(begin[0]) < int(end[0]) and int(begin[1]) < int(end[1])):
-        begin = begin_field.data.time().strftime("%H:%M")
-        end = field.data.time().strftime("%H:%M")
-        if not begin < end:
-            raise ValidationError(msg)
+        return
+        # try:
+        #     begin_field = form[field_name]
+        # except KeyError:
+        #     raise ValidationError(field.gettext("Invalid field name '%s'.") % field_name)
+        #     # begin = begin_field.data.split(":")
+        #     # end = field.data.split(":")
+        #     # if not (int(begin[0]) < int(end[0]) and int(begin[1]) < int(end[1])):
+        # begin = begin_field.data.time().strftime("%H:%M")
+        # end = field.data.time().strftime("%H:%M")
+        # if not begin < end:
+        #     raise ValidationError(msg)
 
     return _begin_end_validate
 
 
 class ClassForm(FlaskForm):
     name = StringField(label=u'课程名称', validators=[validators.DataRequired()])
-    begin = DateTimeField(label=u'开始时间',
-                          validators=[validators.DataRequired(), validators.Regexp("\d{1,2}:\d{2}")], format="%H:%M")
-    end = DateTimeField(label=u'结束时间', validators=[validators.DataRequired(), validators.InputRequired(),
-                                                   begin_end_validate('begin', "test")], format="%H:%M")
-    cal = calendar.Calendar(firstweekday=calendar.MONDAY)
-    days = cal.iterweekdays()
-    days_of_week = SelectMultipleField(label=u'每周上课时间', choices=[(day, calendar.day_name[day]) for day in days],
-                                       validators=[validators.DataRequired()], default = ['1', '3'])
-    total = IntegerField(label=u'班级人数', validators=[validators.DataRequired(), validators.InputRequired()])
-
+    begin = StringField(label=u'开始时间', validators=[validators.DataRequired(), validators.Regexp("\d{1,2}:\d{2}")])
+    end = StringField(label=u'结束时间', validators=[validators.DataRequired(), validators.Regexp("\d{1,2}:\d{2}"),
+                                                 begin_end_validate('begin', "test")])
+    days_of_week = SelectMultipleField(label=u'每周上课时间', choices=WEEKDAYS,
+                                       validators=[validators.DataRequired()])
+    total = IntegerField(label=u'班级人数', validators=[validators.DataRequired()])
