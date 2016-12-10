@@ -1,11 +1,10 @@
 {% extends "base.html" %}
 
-{% block title %}国子监-编辑课程{% endblock %}
+{% block title %}国子监-课程列表{% endblock %}
 
 {% block styles %}
 {{ super() }}
-<!-- Latest compiled and minified CSS -->
-<link rel="stylesheet" href="{{url_for('static', filename='vendor/bootstrap-select/css/bootstrap-select.min.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='vendor/bootstrap-table/bootstrap-table.css')}}">
 {% endblock %}
 
 {% block page_content %}
@@ -13,21 +12,23 @@
     <div class="col-lg-12 col-md-12">
         <div class="panel panel-primary">
             <div class="panel-heading">
-                <i class="fa fa-bar-chart-o fa-fw"></i> Image Example
+                <i class="fa fa-bar-chart-o fa-fw"></i> 课程列表
             </div>
             <div class="panel-body">
                 <div class="table-responsive">
                     <table id="table" class="table table-bordered table-hover table-striped" data-toggle="table"
                            data-search="true" data-striped="true" data-page-size="10" data-page-list="[10]"
-                           data-side-pagination="server" data-ajax="loadCounts" data-pagination="true">
+                           data-side-pagination="server" data-ajax="loadClass" data-pagination="true">
                         <thead>
                         <tr>
                             <th data-field="id">Id</th>
                             <th data-field="name">Name</th>
-                            <th data-field="taken_at">Begin</th>
-                            <th data-field="count">End</th>
-                            <th data-field="taken_at">Day Of Week</th>
-                            <th data-field="count">Total</th>
+                            <th data-field="begin">Begin</th>
+                            <th data-field="end">End</th>
+                            <th data-field="days_of_week">Day Of Week</th>
+                            <th data-field="total">Total</th>
+                            <th data-field="update" data-align="center" data-formatter="initUpdate" data-events="updateEvent">Update</th>
+                            <th data-field="delete" data-align="center" data-formatter="initDelete" data-events="deleteEvent">Delete</th>
                         </tr>
                         </thead>
                     </table>
@@ -41,14 +42,7 @@
 
 {% block scripts %}
 {{  super() }}
-<!-- Latest compiled and minified JavaScript -->
-<script type=text/javascript
-        src="{{url_for('static', filename='vendor/bootstrap-select/js/bootstrap-select.min.js')}}"></script>
-
-<!-- (Optional) Latest compiled and minified JavaScript translation files -->
-<script type=text/javascript
-        src="{{url_for('static', filename='vendor/bootstrap-select/js/i18n/defaults-zh_CN.min.js')}}"></script>
-<script type=text/javascript
-        src="{{url_for('static', filename='vendor/bootstrap-select/js/i18n/defaults-en_US.min.js')}}"></script>
+<script type=text/javascript src="{{url_for('static', filename='vendor/bootstrap-table/bootstrap-table.js')}}"></script>
+<script type=text/javascript src="{{url_for('static', filename='js/classloader.js')}}"></script>
 
 {% endblock %}

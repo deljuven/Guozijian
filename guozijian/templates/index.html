@@ -48,7 +48,10 @@
                         <!-- /.table-responsive -->
                     </div>
                     <div class="col-lg-7 col-md-7">
-                        <img id="gallery" src="{{ counts[0].uri }}"
+                        <img id="gallery"
+                             {% if count is not none %}
+                             src="{{ count.uri }}"
+                             {% endif %}
                              class="img-responsive img-rounded fixed-img"/>
                     </div>
                 </div>

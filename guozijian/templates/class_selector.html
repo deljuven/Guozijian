@@ -1,14 +1,27 @@
 {% extends "base.html" %}
+{% from "utils.html" import flash_message %}
+
+{% block title %}国子监-首页{% endblock %}
 
 {% block styles %}
 {{ super() }}
-<!-- Latest compiled and minified CSS -->
+<!-- Morris Charts CSS -->
+<link rel="stylesheet" href="{{url_for('static', filename='vendor/morrisjs/morris.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='css/guozijian.css')}}">
 <link rel="stylesheet" href="{{url_for('static', filename='vendor/bootstrap-table/bootstrap-table.css')}}">
-<script type=text/javascript src="{{url_for('static', filename='vendor/bootstrap-table/bootstrap-table.js')}}"></script>
-<link rel="stylesheet" href="{{url_for('static', filename='vendor/bootstrap-select/css/bootstrap-select.min.css')}}">
 {% endblock %}
 
 {% block page_content %}
+<div class="row row-eq-height">
+    <div class="col-lg-10">
+        <h1 class="page-header">Dashboard</h1>
+    </div>
+    <div class="col-lg-2">
+        <button type="button" class="btn btn-default vertical-center" onclick="snapshot()">Snapshot</button>
+    </div>
+    <!-- /.col-lg-12 -->
+</div>
+
 <div class="row">
     <div class="col-lg-12 col-md-12">
         <div class="panel panel-primary">
@@ -43,18 +56,59 @@
         </div>
     </div>
 </div>
+
+<div class="row">
+    <div class="col-lg-12 col-md-12">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <i class="fa fa-bar-chart-o fa-fw"></i> Bar Chart Example
+                <div class="pull-right">
+                </div>
+            </div>
+            <!-- /.panel-heading -->
+            <div class="row row-eq-height">
+                <div class="col-lg-4 col-md-4">
+                    <div class="panel panel-default panel-eq-height">
+                        <div id="morris-donut-chart"></div>
+                        <!-- /.panel-body -->
+                    </div>
+                    <!-- /.panel -->
+                </div>
+                <div class="col-lg-8">
+                    <div id="morris-bar-chart"></div>
+                </div>
+            </div>
+        </div>
+        <!-- /.panel -->
+    </div>
+    <!-- /.col-lg-4 (nested) -->
+</div>
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <i class="fa fa-bar-chart-o fa-fw"></i>过去3天的统计
+            </div>
+            <!-- /.panel-heading -->
+            <div class="panel-body">
+                <div id="morris-area-chart"></div>
+            </div>
+            <!-- /.panel-body -->
+        </div>
+        <!-- /.panel -->
+    </div>
+</div>
+<!-- /.row -->
+<!-- /.row -->
 {% endblock %}
 
 {% block scripts %}
-{{  super() }}
-<!-- Latest compiled and minified JavaScript -->
-<script type=text/javascript
-        src="{{url_for('static', filename='vendor/bootstrap-select/js/bootstrap-select.min.js')}}"></script>
-
-<!-- (Optional) Latest compiled and minified JavaScript translation files -->
-<script type=text/javascript
-        src="{{url_for('static', filename='vendor/bootstrap-select/js/i18n/defaults-zh_CN.min.js')}}"></script>
-<script type=text/javascript
-        src="{{url_for('static', filename='vendor/bootstrap-select/js/i18n/defaults-en_US.min.js')}}"></script>
-
-{% endblock %}
+{{ super() }}
+<!-- Morris Charts JavaScript -->
+<script type=text/javascript src="{{url_for('static', filename='vendor/raphael/raphael.min.js')}}"></script>
+<script type=text/javascript src="{{url_for('static', filename='vendor/morrisjs/morris.min.js')}}"></script>
+<script type=text/javascript src="{{url_for('static', filename='vendor/bootstrap-table/bootstrap-table.js')}}"></script>
+<script type=text/javascript src="{{url_for('static', filename='js/morris.js')}}"></script>
+<script type=text/javascript src="{{url_for('static', filename='js/guozijian.js')}}"></script>
+{% endblock scripts %}

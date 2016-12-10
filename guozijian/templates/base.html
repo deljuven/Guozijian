@@ -56,7 +56,7 @@
                     <li class="divider"></li>
                     <li><a href="register"><i class="fa fa-sign-in fa-fw"></i> Register</a>
                     <li>
-                    {% endif %}
+                        {% endif %}
                 </ul>
                 <!-- /.dropdown-user -->
             </li>
@@ -79,30 +79,24 @@
                         <!-- /input-group -->
                     </li>
                     <li>
-                        <a href="index"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
+                        {% block statistic %}
+                        <a href="{{url_for('index')}}"><i class="fa fa-dashboard fa-fw"></i>统计信息</a>
+                        {% endblock statistic %}
                     </li>
                     <li>
-                        <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> Charts<span class="fa arrow"></span></a>
+                        <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i>课程信息<span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
                             <li>
-                                <a href="flot">Flot Charts</a>
+                                <a href="{{url_for('class_list')}}">所有课程</a>
                             </li>
                             <li>
-                                <a href="morris">Morris.js Charts</a>
+                                <a href="{{url_for('new_class')}}">添加课程</a>
                             </li>
                         </ul>
                         <!-- /.nav-second-level -->
                     </li>
                     <li class="active">
-                        <a href="#"><i class="fa fa-files-o fa-fw"></i> Sample Pages<span class="fa arrow"></span></a>
-                        <ul class="nav nav-second-level">
-                            <li>
-                                <a class="active" href="blank">Blank Page</a>
-                            </li>
-                            <li>
-                                <a href="login">Login Page</a>
-                            </li>
-                        </ul>
+                        <a href="{{url_for('index')}}"><i class="fa fa-files-o fa-fw"></i>回到首页</a>
                         <!-- /.nav-second-level -->
                     </li>
                 </ul>

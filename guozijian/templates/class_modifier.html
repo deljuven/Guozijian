@@ -37,7 +37,6 @@
                     {% if class_info is defined and class_info is not none %}
                     <input type="hidden" name="_method" value="PUT"/>
                     <input type="hidden" name="_class" value="{{ class_info.class_id }}"/>
-                    <input type="hidden" id="_old" value="{{ class_info.days_of_week }}"/>
                     {% endif %}
                     <fieldset>
                         {{ render_field(form.name) }}
@@ -150,7 +149,7 @@
     });
 
     {% if class_info is defined and class_info is not none %}
-    $('#picker').selectpicker("val", $.parseJSON($("#_old").val())).attr("multiple", true);
+    $('#picker').selectpicker("val", {{ class_info.days_of_week }}).attr("multiple", true);
     {% endif %}
 
     function updateClass() {

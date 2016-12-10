@@ -2,6 +2,9 @@
 import calendar
 import json
 import locale
+import time
+
+from utils import WEEKDAY_MAP
 
 if __name__ == '__main__':
     print dict(name="1", begin=2, end=3, days_of_week=[3, 5], total=6)
@@ -24,14 +27,18 @@ if __name__ == '__main__':
     # print date_test2 < date_test
 
     locale.setlocale(locale.LC_ALL, "chinese")
-    print locale.getlocale()
-    print locale.locale_alias["zh_cn"]
-    print locale.getpreferredencoding()
-    print locale.getdefaultlocale()
 
     cal = calendar.Calendar(firstweekday=calendar.MONDAY)
     days = cal.iterweekdays()
-    # for day in days:
-    #     print calendar.day_name[day]
-    choices = [(day, calendar.day_name[day].decode(locale.getpreferredencoding()).encode("utf8")) for day in days]
+    choices = [(day, calendar.day_name[day].decode("gbk").encode("utf8")) for day in days]
     print choices[0][1]
+    map_ = dict(choices)
+    print map(lambda x: map_[x], json.loads("[1,2,3,4,5]"))
+    print map(lambda x: WEEKDAY_MAP[x], json.loads("[1,2,3,4,5]"))
+    print map(lambda x: WEEKDAY_MAP[x].encode("utf8"), json.loads("[1,2,3,4,5]"))
+
+    begin = time.strptime("09:00", "%H:%M")
+    end = time.strptime("10:00", "%H:%M")
+    print begin < end
+    test = "test"
+    print "%%%s%%" % test

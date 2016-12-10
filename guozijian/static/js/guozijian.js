@@ -1,5 +1,5 @@
-function snapshot() {
-    $.get("snapshot", function (data) {
+function snapshot(class_id) {
+    $.get("snapshot", {'class': class_id}, function (data) {
         alert(data.title);
     });
 }
@@ -10,9 +10,11 @@ function ping() {
 
 function loadCounts(params) {
     $.get("counts", params.data).done(function (data) {
-        renderBar(data.data);
-        reanderArea(data.data);
-        renderDonut(data.data[0]);
+        if (data.data.length > 0) {
+            renderBar(data.data);
+            reanderArea(data.data);
+            renderDonut(data.data[0]);
+        }
         params.success({
             total: data.total,
             rows: data.data

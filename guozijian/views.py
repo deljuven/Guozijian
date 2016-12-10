@@ -7,7 +7,7 @@ from flask_moment import Moment
 from guozijian import app, login_manager
 from login import signin, signout, signup
 from models import User, LoginForm, RegistrationForm, CountInfo, ClassInfo, ClassForm
-from service import test_db, snapshot, delete_class, add_class, update_class
+from service import test_db, snapshot, delete_class, add_class, update_class, query_counts
 from utils import PER_PAGE, WEEKDAY_MAP
 
 moment = Moment(app)
@@ -26,8 +26,8 @@ def home():
 @app.route('/index')
 @login_required
 def index():
-    counts = CountInfo.query.all()
-    return render_template("index.html", counts=counts)
+    latest_count = CountInfo.query.first()
+    return render_template("index.html", count=latest_count)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -61,15 +61,6 @@ def logout():
     return redirect(url_for('index'))
 
 
-@app.route('/counts')
-@login_required
-def counts():
-    offset = request.args.get('offset', type=int)
-    page = offset / PER_PAGE + 1
-    data = CountInfo.query.paginate(page=page, per_page=PER_PAGE)
-    return jsonify(total=data.total, data=[i.serialize for i in data.items])
-
-
 @app.route('/classes', methods=['GET', 'POST'])
 def new_class():
     form = ClassForm()
@@ -99,9 +90,9 @@ def change_class(class_id):
     class_info = ClassInfo.query.get(class_id)
     if request.method == 'DELETE':
         if class_id is None:
-            return redirect(url_for('class_list'))
+            return "failed"
         delete_class(class_id)
-        return redirect(url_for('class_list'))
+        return "success"
     elif request.method == "GET":
         return render_template("class_modifier.html", form=form, class_info=class_info, class_id=class_id)
     days_of_week.data = [int(t.encode("ascii")) for t in days_of_week.data]
@@ -116,15 +107,70 @@ def change_class(class_id):
         # return render_template("class_modifier.html", form=form, class_info=class_info)
         # class_info = ClassInfo.query.get(class_id)
         if form.validate_on_submit():
-            return "hello"
+            class_info = update_class(class_id=class_id, name=name.data, begin=begin.data, end=end.data,
+                                      days_of_week=days_of_week.data, total=total.data)
+            return jsonify(class_info.serialize)
         return jsonify(form.errors)
     return render_template("class_modifier.html", form=form, class_info=class_info, class_id=class_id)
 
 
+@app.route('/classes/')
+@app.route('/classes/list')
+def class_page():
+    offset = request.args.get('offset', type=int, default=0)
+    per_page = request.args.get('limit', type=int, default=PER_PAGE)
+    search = request.args.get('search')
+    page = offset / per_page + 1
+    query = ClassInfo.query
+    if search:
+        query = query.filter(ClassInfo.name.like("%%%s%%" % search))
+    data = query.paginate(page=page, per_page=per_page)
+    return jsonify(total=data.total, data=[i.serialize for i in data.items])
+
+
 @app.route('/class_list')
 def class_list():
-    class_list_ = ClassInfo.query.all()
-    return render_template("class_list.html", class_list=class_list_)
+    return render_template("class_list.html")
+
+
+@app.route('/statistic')
+@login_required
+def statistic():
+    class_id = request.args.get('class', type=int)
+    if class_id is None:
+        return redirect(url_for('class_list'))
+    count = CountInfo.query.filter_by(class_id=class_id).first()
+    return render_template("statistic.html", count=count, class_id=class_id)
+
+
+@app.route('/counts')
+@login_required
+def counts():
+    class_id = request.args.get('class', type=int)
+    offset = request.args.get('offset', type=int, default=0)
+    per_page = request.args.get('limit', type=int, default=PER_PAGE)
+    name = request.args.get('name')
+    app.logger.info(class_id)
+    page = offset / per_page + 1
+    data = query_counts(class_id=class_id, name=name, page=page, per_page=per_page)
+    app.logger.info(data.total)
+    return jsonify(total=data.total, data=[i.serialize for i in data.items])
+
+
+@app.route('/snapshot')
+@login_required
+def on_snapshot():
+    class_id = request.args.get('class', type=int)
+    app.logger.info(class_id)
+    snapshot(class_id)
+    return jsonify(title="hello world")
+
+
+@app.route('/latest')
+@login_required
+def latest():
+    latest = CountInfo.query.order_by(CountInfo.taken_at.desc()).limit(100).all()
+    return jsonify([i.serialize for i in latest])
 
 
 @app.errorhandler(404)
@@ -145,17 +191,3 @@ def test():
 @app.route('/testdb')
 def testdb():
     return test_db()
-
-
-@app.route('/snapshot')
-@login_required
-def on_snapshot():
-    snapshot()
-    return jsonify(title="hello world")
-
-
-@app.route('/latest')
-@login_required
-def latest():
-    latest = CountInfo.query.order_by(CountInfo.taken_at.desc()).limit(100).all()
-    return jsonify([i.serialize for i in latest])
