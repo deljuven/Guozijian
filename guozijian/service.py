@@ -5,7 +5,7 @@ from datetime import datetime
 
 from face.ImageDetector import ImageDetector
 from guozijian import db, APP_PATH
-from models import CountInfo, ClassInfo
+from models import CountInfo, ClassInfo, Test
 from utils import PER_PAGE
 from video.VideoService import VideoService
 
@@ -74,3 +74,18 @@ def query_counts(begin=None, end=None, class_id=None, name=None, page=1, per_pag
     if page == -1 and per_page == -1:
         return query.all()
     return query.paginate(page=page, per_page=per_page)
+
+
+def pong(class_id, start, finish):
+    test = Test(name="test_" + class_id)
+    print start, finish
+    db.session.add(test)
+    db.session.flush()
+    db.session.commit()
+
+
+def schedule_class():
+    query = ClassInfo.query
+    today = datetime.today().weekday()
+    query = query.filter(ClassInfo.days_of_week.contains(str(today)))
+    return query.all()

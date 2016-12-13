@@ -7,7 +7,7 @@ from flask_moment import Moment
 from guozijian import app, login_manager
 from login import signin, signout, signup
 from models import User, LoginForm, RegistrationForm, CountInfo, ClassInfo, ClassForm
-from service import snapshot, delete_class, add_class, update_class, query_counts
+from service import snapshot, delete_class, add_class, update_class, query_counts, schedule_class
 from utils import PER_PAGE, WEEKDAY_MAP
 
 moment = Moment(app)
@@ -179,3 +179,9 @@ def page_not_found(e):
 @login_manager.unauthorized_handler
 def unauthorized_callback():
     return redirect('/login?next=' + request.path)
+
+
+@app.route('/test')
+def test():
+    tests = schedule_class()
+    return jsonify([i.serialize for i in tests])

@@ -2,6 +2,7 @@
 
 import json
 import time
+from datetime import datetime
 
 from flask_user import UserMixin
 from flask_wtf import FlaskForm
@@ -109,8 +110,6 @@ class ClassInfo(db.Model):
     days_of_week = db.Column("days_of_week", db.String(30), nullable=False)
     total = db.Column("total", db.Integer, nullable=False)
 
-    # counts = db.relationship('CountInfo', backref='count_info', lazy="dynamic")
-
     def __init__(self, name, begin, end, days_of_week, total):
         self.name = name
         self.begin = begin
@@ -167,3 +166,25 @@ class ClassForm(FlaskForm):
     days_of_week = SelectMultipleField(label=u'每周上课时间', choices=WEEKDAYS,
                                        validators=[validators.DataRequired()])
     total = IntegerField(label=u'班级人数', validators=[validators.DataRequired()])
+
+
+class Test(db.Model):
+    __tablename__ = 'test'
+    test_id = db.Column("id", db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column("name", db.String(100), unique=True, nullable=False)
+    create_time = db.Column("create_time", db.DateTime, nullable=False, default=datetime)
+
+    def __init__(self, name, create_time=datetime.now()):
+        self.name = name
+        self.create_time = create_time
+
+    def __repr__(self):
+        return '<Test %r>' % {'name': self.name.encode(), 'create_time': self.create_time.encode()}
+
+    @property
+    def serialize(self):
+        return {
+            "id": self.class_id,
+            "name": self.name,
+            "create_time": self.create_time
+        }
