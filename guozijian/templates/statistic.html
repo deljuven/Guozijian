@@ -73,10 +73,7 @@
             <!-- /.panel-heading -->
             <div class="row row-eq-height">
                 <div class="col-lg-4 col-md-4">
-                    <div class="panel panel-default panel-eq-height">
                         <div id="morris-donut-chart"></div>
-                        <!-- /.panel-body -->
-                    </div>
                     <!-- /.panel -->
                 </div>
                 <div class="col-lg-8">
@@ -117,6 +114,7 @@
 <script type=text/javascript src="{{url_for('static', filename='js/morris.js')}}"></script>
 <script type=text/javascript src="{{url_for('static', filename='js/guozijian.js')}}"></script>
 <script type=text/javascript>
+    var total = {{ total }};
     function statistic_param(params) {
         params['class'] = {{ class_id }};
         return params;

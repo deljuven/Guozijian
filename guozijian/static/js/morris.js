@@ -22,7 +22,7 @@ Date.prototype.yyyymmmddMMHH = function () {
 
 function reanderArea(counts, id) {
     Morris.Area({
-        element:id,
+        element: id,
         data: genData(counts),
         xkey: 'date',
         ykeys: ['count'],
@@ -37,10 +37,10 @@ function reanderArea(counts, id) {
     });
 }
 
-function renderDonut(count, id) {
-    Morris.Donut({
+function renderDonut(count, id, total) {
+    return Morris.Donut({
         element: id,
-        data: genDonuts(count),
+        data: genDonuts(count, total),
         resize: true
     });
 }
@@ -57,8 +57,8 @@ function renderBar(counts, id) {
     });
 }
 
-function genDonuts(count) {
-    return [{label: "识别出的", value: count.count}];
+function genDonuts(count, total) {
+    return [{label: "识别出", value: count.count}, {label: "未识别出", value: total - count.count}];
 }
 
 function genData(counts) {

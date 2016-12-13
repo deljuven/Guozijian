@@ -4,23 +4,23 @@ import os
 from datetime import datetime
 
 from face.ImageDetector import ImageDetector
-from guozijian import db, APP_PATH
+from database import db
 from models import CountInfo, ClassInfo, Test
 from utils import PER_PAGE
 from video.VideoService import VideoService
 
 
-def snapshot(class_id):
+def snapshot(class_id, base_path):
     vs = VideoService()
     url = vs.take_picture()
-    detector = ImageDetector(url)
+    detector = ImageDetector(url, APP_IMG_SAV_PATH)
     faces = detector.detect(4)
-    save_to_db(detector, faces, class_id)
+    save_to_db(detector, faces, class_id, base_path)
 
 
-def save_to_db(detector, face_count, class_id):
+def save_to_db(detector, face_count, class_id, base_path):
     name = os.path.basename(detector.file_path)
-    path = os.path.relpath(detector.file_path, APP_PATH)
+    path = os.path.relpath(detector.file_path, base_path)
     count = CountInfo(name, path, datetime.now(), face_count, class_id)
     db.session.add(count)
     db.session.flush()

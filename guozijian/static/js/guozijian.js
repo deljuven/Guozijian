@@ -8,7 +8,15 @@ function ping() {
     console.log("ping");
 }
 
+var donut;
+
 function loadCounts(params) {
+    $.get("counts", params.data).done(function (data) {
+        params.success({
+            total: data.total,
+            rows: data.data
+        })
+    });
     var begin = new Date();
     begin.setDate(begin.getDate() - 3);
     params.data['begin'] = begin / 1000;
@@ -16,12 +24,8 @@ function loadCounts(params) {
         if (data.data.length > 0) {
             renderBar(data.data, 'morris-bar-chart');
             reanderArea(data.data, 'morris-area-chart');
-            renderDonut(data.data[0], 'morris-donut-chart');
+            donut = renderDonut(data.data[0], 'morris-donut-chart', total);
         }
-        params.success({
-            total: data.total,
-            rows: data.data
-        })
     });
 }
 
@@ -44,5 +48,6 @@ function loadIndex(params) {
 $(document).ready(function () {
     $('#table').on('click-cell.bs.table', function (field, value, row, element) {
         $("#gallery").attr("src", element.uri);
+        donut.setData(genDonuts(element, total));
     });
 });

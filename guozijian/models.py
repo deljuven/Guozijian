@@ -8,8 +8,7 @@ from flask_user import UserMixin
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, validators, BooleanField, IntegerField, SelectMultipleField, \
     ValidationError
-
-from guozijian import db
+from database import db
 from utils import WEEKDAYS, WEEKDAY_MAP
 
 

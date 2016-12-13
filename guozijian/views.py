@@ -4,7 +4,7 @@ from flask import render_template, redirect, url_for, request, jsonify
 from flask_login import login_required
 from flask_moment import Moment
 
-from guozijian import app, login_manager
+from guozijian import app, login_manager, APP_PATH
 from login import signin, signout, signup
 from models import User, LoginForm, RegistrationForm, CountInfo, ClassInfo, ClassForm
 from service import snapshot, delete_class, add_class, update_class, query_counts, schedule_class
@@ -119,8 +119,11 @@ def class_page():
     offset = request.args.get('offset', type=int, default=0)
     per_page = request.args.get('limit', type=int, default=PER_PAGE)
     search = request.args.get('search')
+    class_id = request.args.get('class')
     page = offset / per_page + 1
     query = ClassInfo.query
+    if class_id:
+        return jsonify(query.get(class_id).serialize)
     if search:
         query = query.filter(ClassInfo.name.like("%%%s%%" % search))
     data = query.paginate(page=page, per_page=per_page)
@@ -139,7 +142,8 @@ def statistic():
     if class_id is None:
         return redirect(url_for('class_list'))
     count = CountInfo.query.filter_by(class_id=class_id).first()
-    return render_template("statistic.html", count=count, class_id=class_id)
+    total = ClassInfo.query.get(class_id).total
+    return render_template("statistic.html", count=count, class_id=class_id, total=total)
 
 
 @app.route('/counts')
@@ -160,7 +164,7 @@ def counts():
 @login_required
 def on_snapshot():
     class_id = request.args.get('class', type=int)
-    snapshot(class_id)
+    snapshot(class_id, APP_PATH)
     return jsonify(title="hello world")
 
 

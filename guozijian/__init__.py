@@ -4,11 +4,12 @@ from datetime import datetime
 
 from flask import Flask
 from flask_bootstrap import Bootstrap
-from flask_sqlalchemy import SQLAlchemy
 from flask_user import LoginManager
 from sqlalchemy.exc import IntegrityError
 
-from scheduler import init_scheduler, add_job, scheduler
+from database import db
+from models import db
+from scheduler import init_scheduler, add_daily_scheduler, scheduler
 from utils import DB_URI, SQLITE_URI
 
 app = Flask(__name__)
@@ -33,7 +34,6 @@ app.secret_key = 's3cr3t'
 login_manager = LoginManager()
 login_manager.init_app(app)
 
-db = SQLAlchemy()
 db.init_app(app)
 import guozijian.models
 
@@ -50,8 +50,12 @@ with app.app_context():
     except IntegrityError as ex:
         app.logger.info(ex.message)
 
-init_scheduler()
-# add_job()
+# from flask_scheduler import Config, scheduler
+# app.config.from_object(Config())
+# scheduler.init_app(app)
 # scheduler.start()
+init_scheduler(app)
+add_daily_scheduler()
+scheduler.start()
 
 import guozijian.views

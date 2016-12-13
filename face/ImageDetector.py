@@ -8,7 +8,6 @@ import requests
 from PIL import Image, ImageDraw
 
 from facepp import API, File
-from guozijian import APP_IMG_SAV_PATH
 
 API_KEY = '185839fab47af2675b5e458275215a39'
 API_SECRET = 'x7EXrX4c5WgIjAQ9un3SgI4-QYTad7Dx'
@@ -19,11 +18,11 @@ class ImageDetector:
     file_path = None
     api = None
 
-    def __init__(self, img_url):
+    def __init__(self, img_url, base_path):
         picture_result = requests.get(img_url)
         img = Image.open(BytesIO(picture_result.content))
         timestamp = time.strftime("%Y%m%d-%H%M%S", time.localtime(time.time()))
-        path = APP_IMG_SAV_PATH + '/' + timestamp + '.png'
+        path = base_path + '/' + timestamp + '.png'
         img.save(path)
         self.file_path = path
         self.api = API(API_KEY, API_SECRET)
