@@ -10,13 +10,6 @@ from utils import PER_PAGE
 from video.VideoService import VideoService
 
 
-def test_db():
-    if db.session.query("1").from_statement("SELECT 1").all():
-        return 'It works.'
-    else:
-        return 'Something is broken.'
-
-
 def snapshot(class_id):
     vs = VideoService()
     url = vs.take_picture()
@@ -68,10 +61,16 @@ def query_class(name=None, days_of_week=None, page=1, per_page=PER_PAGE):
     return query.paginate(page=page, per_page=per_page)
 
 
-def query_counts(class_id=None, name=None, page=1, per_page=PER_PAGE):
+def query_counts(begin=None, end=None, class_id=None, name=None, page=1, per_page=PER_PAGE):
     query = CountInfo.query
     if name:
         query = query.filter(CountInfo.name.like("%%%s%%" % name))
     if class_id:
         query = query.filter_by(class_id=class_id)
+    if begin is not None:
+        query = query.filter(CountInfo.taken_at >= datetime.fromtimestamp(begin))
+    if end is not None:
+        query = query.filter(CountInfo.taken_at < datetime.fromtimestamp(begin))
+    if page == -1 and per_page == -1:
+        return query.all()
     return query.paginate(page=page, per_page=per_page)

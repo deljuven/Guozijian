@@ -118,8 +118,7 @@
 <script type=text/javascript src="{{url_for('static', filename='js/guozijian.js')}}"></script>
 <script type=text/javascript>
     function statistic_param(params) {
-        console.log(params)
-        params['class'] = {{class_id}};
+        params['class'] = {{ class_id }};
         return params;
     }
 </script>

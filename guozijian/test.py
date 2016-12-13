@@ -4,6 +4,8 @@ import json
 import locale
 import time
 
+from datetime import datetime
+
 from utils import WEEKDAY_MAP
 
 if __name__ == '__main__':
@@ -42,3 +44,5 @@ if __name__ == '__main__':
     print begin < end
     test = "test"
     print "%%%s%%" % test
+    d = datetime.fromtimestamp(1481448907.636)
+    print d

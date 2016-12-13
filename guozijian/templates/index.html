@@ -22,63 +22,30 @@
     <!-- /.col-lg-12 -->
 </div>
 
-<div class="row">
+<div class="row row-eq-height">
     <div class="col-lg-12 col-md-12">
         <div class="panel panel-primary">
             <div class="panel-heading">
-                <i class="fa fa-bar-chart-o fa-fw"></i> Image Example
-            </div>
-            <div class="panel-body">
-                <div class="row row-eq-height">
-                    <div class="col-lg-5 col-md-5">
-                        <div class="table-responsive">
-                            <table id="table" class="table table-bordered table-hover table-striped" data-toggle="table"
-                                   data-search="true" data-striped="true" data-page-size="10" data-page-list="[10]"
-                                   data-side-pagination="server" data-ajax="loadCounts" data-pagination="true">
-                                <thead>
-                                <tr>
-                                    <th data-field="id">Id</th>
-                                    <th data-field="name">Name</th>
-                                    <th data-field="taken_at">Time</th>
-                                    <th data-field="count">Counts</th>
-                                </tr>
-                                </thead>
-                            </table>
-                        </div>
-                        <!-- /.table-responsive -->
-                    </div>
-                    <div class="col-lg-7 col-md-7">
-                        <img id="gallery"
-                             {% if count is not none %}
-                             src="{{ count.uri }}"
-                             {% endif %}
-                             class="img-responsive img-rounded fixed-img"/>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="row">
-    <div class="col-lg-12 col-md-12">
-        <div class="panel panel-primary">
-            <div class="panel-heading">
-                <i class="fa fa-bar-chart-o fa-fw"></i> Bar Chart Example
+                <i class="fa fa-bar-chart-o fa-fw"></i>一周内统计
                 <div class="pull-right">
                 </div>
             </div>
             <!-- /.panel-heading -->
             <div class="row row-eq-height">
-                <div class="col-lg-4 col-md-4">
+                <div class="col-lg-6 col-md-6">
                     <div class="panel panel-default panel-eq-height">
-                        <div id="morris-donut-chart"></div>
-                        <!-- /.panel-body -->
+                        <div id="morris-bar-chart"></div>
                     </div>
                     <!-- /.panel -->
                 </div>
-                <div class="col-lg-8">
-                    <div id="morris-bar-chart"></div>
+                <div class="col-lg-6">
+                    <div class="panel panel-default panel-eq-height">
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <div id="morris-area-chart"></div>
+                        </div>
+                        <!-- /.panel-body -->
+                    </div>
                 </div>
             </div>
         </div>
@@ -87,22 +54,37 @@
     <!-- /.col-lg-4 (nested) -->
 </div>
 
-<div class="row">
-    <div class="col-lg-12">
+<div class="row row-eq-height">
+    <div class="col-lg-12 col-md-12">
         <div class="panel panel-primary">
             <div class="panel-heading">
-                <i class="fa fa-bar-chart-o fa-fw"></i>过去3天的统计
+                <i class="fa fa-bar-chart-o fa-fw"></i>历史统计
+                <div class="pull-right">
+                </div>
             </div>
             <!-- /.panel-heading -->
-            <div class="panel-body">
-                <div id="morris-area-chart"></div>
+            <div class="row row-eq-height">
+                <div class="col-lg-6 col-md-6">
+                    <div class="panel panel-default panel-eq-height">
+                        <div id="history-bar-chart"></div>
+                    </div>
+                    <!-- /.panel -->
+                </div>
+                <div class="col-lg-6">
+                    <div class="panel panel-default panel-eq-height">
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <div id="history-area-chart"></div>
+                        </div>
+                        <!-- /.panel-body -->
+                    </div>
+                </div>
             </div>
-            <!-- /.panel-body -->
         </div>
         <!-- /.panel -->
     </div>
+    <!-- /.col-lg-4 (nested) -->
 </div>
-<!-- /.row -->
 <!-- /.row -->
 {% endblock %}
 
@@ -114,4 +96,16 @@
 <script type=text/javascript src="{{url_for('static', filename='vendor/bootstrap-table/bootstrap-table.js')}}"></script>
 <script type=text/javascript src="{{url_for('static', filename='js/morris.js')}}"></script>
 <script type=text/javascript src="{{url_for('static', filename='js/guozijian.js')}}"></script>
+
+<script type=text/javascript>
+    $(document).ready(function () {
+        var params = {};
+        var begin = new Date();
+        begin.setDate(begin.getDate() - 7);
+        params['begin'] = begin.getTime() / 1000;
+        params['offset'] = -1;
+        params['limit'] = -1;
+        loadIndex(params);
+    });
+</script>
 {% endblock scripts %}

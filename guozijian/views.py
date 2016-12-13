@@ -7,7 +7,7 @@ from flask_moment import Moment
 from guozijian import app, login_manager
 from login import signin, signout, signup
 from models import User, LoginForm, RegistrationForm, CountInfo, ClassInfo, ClassForm
-from service import test_db, snapshot, delete_class, add_class, update_class, query_counts
+from service import snapshot, delete_class, add_class, update_class, query_counts
 from utils import PER_PAGE, WEEKDAY_MAP
 
 moment = Moment(app)
@@ -26,8 +26,7 @@ def home():
 @app.route('/index')
 @login_required
 def index():
-    latest_count = CountInfo.query.first()
-    return render_template("index.html", count=latest_count)
+    return render_template("index.html")
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -150,10 +149,10 @@ def counts():
     offset = request.args.get('offset', type=int, default=0)
     per_page = request.args.get('limit', type=int, default=PER_PAGE)
     name = request.args.get('name')
-    app.logger.info(class_id)
+    begin = request.args.get('begin', type=float)
+    end = request.args.get('end', type=float)
     page = offset / per_page + 1
-    data = query_counts(class_id=class_id, name=name, page=page, per_page=per_page)
-    app.logger.info(data.total)
+    data = query_counts(begin=begin, end=end, class_id=class_id, name=name, page=page, per_page=per_page)
     return jsonify(total=data.total, data=[i.serialize for i in data.items])
 
 
@@ -161,7 +160,6 @@ def counts():
 @login_required
 def on_snapshot():
     class_id = request.args.get('class', type=int)
-    app.logger.info(class_id)
     snapshot(class_id)
     return jsonify(title="hello world")
 
@@ -181,13 +179,3 @@ def page_not_found(e):
 @login_manager.unauthorized_handler
 def unauthorized_callback():
     return redirect('/login?next=' + request.path)
-
-
-@app.route('/test')
-def test():
-    return render_template("test.html")
-
-
-@app.route('/testdb')
-def testdb():
-    return test_db()

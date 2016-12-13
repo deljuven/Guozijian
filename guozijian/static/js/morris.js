@@ -20,9 +20,9 @@ Date.prototype.yyyymmmddMMHH = function () {
         (MM > 9 ? '' : '0') + MM;
 };
 
-function reanderArea(counts) {
+function reanderArea(counts, id) {
     Morris.Area({
-        element: 'morris-area-chart',
+        element:id,
         data: genData(counts),
         xkey: 'date',
         ykeys: ['count'],
@@ -37,17 +37,17 @@ function reanderArea(counts) {
     });
 }
 
-function renderDonut(count) {
+function renderDonut(count, id) {
     Morris.Donut({
-        element: 'morris-donut-chart',
+        element: id,
         data: genDonuts(count),
         resize: true
     });
 }
 
-function renderBar(counts) {
+function renderBar(counts, id) {
     Morris.Bar({
-        element: 'morris-bar-chart',
+        element: id,
         data: genData(counts),
         xkey: 'date',
         ykeys: ['count'],
