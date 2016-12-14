@@ -2,8 +2,6 @@
 import calendar
 import json
 import locale
-import time
-
 from datetime import datetime
 
 from utils import WEEKDAY_MAP
@@ -39,10 +37,15 @@ if __name__ == '__main__':
     print map(lambda x: WEEKDAY_MAP[x], json.loads("[1,2,3,4,5]"))
     print map(lambda x: WEEKDAY_MAP[x].encode("utf8"), json.loads("[1,2,3,4,5]"))
 
-    begin = time.strptime("09:00", "%H:%M")
-    end = time.strptime("10:00", "%H:%M")
+    # begin = time.strptime("09:00", "%H:%M")
+    # end = time.strptime("10:00", "%H:%M")
+    start = map(int, "09:00".split(":"))
+    fin = map(int, "10:00".split(":"))
+    begin = datetime.today().replace(hour=start[0], minute=start[1])
+    end = datetime.today().replace(hour=fin[0], minute=fin[1])
+    print ["hello"] + ["world"]
     print begin < end
     test = "test"
     print "%%%s%%" % test
-    d = datetime.fromtimestamp(1481644800.0)
+    d = datetime.fromtimestamp(1481707680.0)
     print str(d)

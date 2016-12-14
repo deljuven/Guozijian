@@ -55,7 +55,7 @@ with app.app_context():
 # scheduler.init_app(app)
 # scheduler.start()
 init_scheduler(app)
-add_daily_scheduler()
+add_daily_scheduler(APP_IMG_SAV_PATH)
 scheduler.start()
 
 import guozijian.views

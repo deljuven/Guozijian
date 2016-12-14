@@ -8,6 +8,7 @@ from flask_user import UserMixin
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, validators, BooleanField, IntegerField, SelectMultipleField, \
     ValidationError
+
 from database import db
 from utils import WEEKDAYS, WEEKDAY_MAP
 
@@ -171,9 +172,9 @@ class Test(db.Model):
     __tablename__ = 'test'
     test_id = db.Column("id", db.Integer, primary_key=True, autoincrement=True)
     name = db.Column("name", db.String(100), unique=True, nullable=False)
-    create_time = db.Column("create_time", db.DateTime, nullable=False, default=datetime)
+    create_time = db.Column("create_time", db.DateTime, nullable=False, default=datetime.now())
 
-    def __init__(self, name, create_time=datetime.now()):
+    def __init__(self, name, create_time):
         self.name = name
         self.create_time = create_time
 

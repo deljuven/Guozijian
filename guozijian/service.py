@@ -13,7 +13,7 @@ from video.VideoService import VideoService
 def snapshot(class_id, base_path):
     vs = VideoService()
     url = vs.take_picture()
-    detector = ImageDetector(url, APP_IMG_SAV_PATH)
+    detector = ImageDetector(url, base_path)
     faces = detector.detect(4)
     save_to_db(detector, faces, class_id, base_path)
 
