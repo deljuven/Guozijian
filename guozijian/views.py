@@ -68,12 +68,14 @@ def new_class():
     end = form.end
     days_of_week = form.days_of_week
     total = form.total
+    interval = form.interval
     if request.method == 'GET':
         return render_template("class_modifier.html", form=form)
     days_of_week.data = [int(t.encode("ascii")) for t in days_of_week.data]
     tmp = {t: WEEKDAY_MAP[t] for t in days_of_week.data}
     if request.method == 'POST' and form.validate_on_submit():
-        add_class(name=name.data, begin=begin.data, end=end.data, days_of_week=days_of_week.data, total=total.data)
+        add_class(name=name.data, begin=begin.data, end=end.data, days_of_week=days_of_week.data, total=total.data,
+                  interval=interval.data)
         return redirect(url_for('class_list'))
     return render_template("class_modifier.html", form=form)
 
@@ -86,6 +88,7 @@ def change_class(class_id):
     end = form.end
     days_of_week = form.days_of_week
     total = form.total
+    interval = form.interval
     class_info = ClassInfo.query.get(class_id)
     if request.method == 'DELETE':
         if class_id is None:
@@ -98,7 +101,7 @@ def change_class(class_id):
     tmp = {t: WEEKDAY_MAP[t] for t in days_of_week.data}
     if request.method == 'POST' and request.form['_method'] == 'PUT' and form.validate_on_submit():
         class_info = update_class(class_id=class_id, name=name.data, begin=begin.data, end=end.data,
-                                  days_of_week=days_of_week.data, total=total.data)
+                                  days_of_week=days_of_week.data, total=total.data, interval=interval.data)
         return render_template("class_modifier.html", form=form, class_info=class_info, class_id=class_id)
     elif request.method == 'PUT':
         # class_info = update_class(id=class_id, name=name.data, begin=begin.data, end=end.data,
@@ -107,7 +110,7 @@ def change_class(class_id):
         # class_info = ClassInfo.query.get(class_id)
         if form.validate_on_submit():
             class_info = update_class(class_id=class_id, name=name.data, begin=begin.data, end=end.data,
-                                      days_of_week=days_of_week.data, total=total.data)
+                                      days_of_week=days_of_week.data, total=total.data, interval=interval.data)
             return jsonify(class_info.serialize)
         return jsonify(form.errors)
     return render_template("class_modifier.html", form=form, class_info=class_info, class_id=class_id)

@@ -52,7 +52,7 @@ def add_daily_job(args):
         start = today.replace(hour=begin[0], minute=(begin[1] + 59) % 60)
         fin = today.replace(hour=end[0], minute=(end[1] + 59) % 60)
         args = [item.class_id] + [args]
-        add_job(snapshot_job, args, start, fin, 5)
+        add_job(snapshot_job, args, start, fin, item.interval)
 
 
 def add_job(job, args=None, start_date=None, end_date=None, interval=5):

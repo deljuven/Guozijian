@@ -109,17 +109,20 @@ class ClassInfo(db.Model):
     end = db.Column("end_time", db.String(20), nullable=False)
     days_of_week = db.Column("days_of_week", db.String(30), nullable=False)
     total = db.Column("total", db.Integer, nullable=False)
+    interval = db.Column("interval", db.Integer, nullable=False, default=5)
 
-    def __init__(self, name, begin, end, days_of_week, total):
+    def __init__(self, name, begin, end, days_of_week, total, interval=5):
         self.name = name
         self.begin = begin
         self.end = end
         self.days_of_week = json.dumps(days_of_week)
         self.total = total
+        self.interval = interval
 
     def __repr__(self):
         return '<Class %r>' % {'name': self.name.encode(), 'begin': self.begin.encode(), 'end': self.end.encode(),
-                               'days_of_week': json.loads(self.days_of_week), 'total': self.total}
+                               'days_of_week': json.loads(self.days_of_week), 'total': self.total,
+                               'interval': self.interval}
 
     @property
     def serialize(self):
@@ -131,7 +134,8 @@ class ClassInfo(db.Model):
             "end": self.end,
             "days_of_week": days,
             "days": self.days_of_week,
-            "total": self.total
+            "total": self.total,
+            "interval": self.interval
         }
 
 
@@ -166,6 +170,7 @@ class ClassForm(FlaskForm):
     days_of_week = SelectMultipleField(label=u'每周上课时间', choices=WEEKDAYS,
                                        validators=[validators.DataRequired()])
     total = IntegerField(label=u'班级人数', validators=[validators.DataRequired()])
+    interval = IntegerField(label=u'拍照频率(分钟)', validators=[validators.DataRequired()])
 
 
 class Test(db.Model):

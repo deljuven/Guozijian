@@ -4,10 +4,6 @@ function snapshot(class_id) {
     });
 }
 
-function ping() {
-    console.log("ping");
-}
-
 var donut;
 
 function loadCounts(params) {
@@ -25,22 +21,6 @@ function loadCounts(params) {
             renderBar(data.data, 'morris-bar-chart');
             reanderArea(data.data, 'morris-area-chart');
             donut = renderDonut(data.data[0], 'morris-donut-chart', total);
-        }
-    });
-}
-
-function loadIndex(params) {
-    $.get("counts", params).done(function (data) {
-        if (data.data.length > 0) {
-            renderBar(data.data, 'morris-bar-chart');
-            reanderArea(data.data, 'morris-area-chart');
-        }
-    });
-    delete params['begin'];
-    $.get("counts", params).done(function (data) {
-        if (data.data.length > 0) {
-            renderBar(data.data, 'history-bar-chart');
-            reanderArea(data.data, 'history-area-chart');
         }
     });
 }

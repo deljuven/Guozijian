@@ -96,6 +96,15 @@
                             {{ form.total(class_="form-control", placeholder="10", autofocus=true, required=true) }}
                             {% endif %}
                         </div>
+                        {{ render_field(form.interval) }}
+                        <div class="form-group">
+                            {% if class_info is defined and class_info is not none %}
+                            {{ form.total(class_="form-control", value=class_info.interval, autofocus=true, required=true)
+                            }}
+                            {% else %}
+                            {{ form.total(class_="form-control", placeholder="5", value="5", autofocus=true, required=true) }}
+                            {% endif %}
+                        </div>
                         <!-- Change this to a button or input when using this as a form -->
                         <div class="row">
                             <div class="col-md-6">

@@ -3,8 +3,8 @@ import json
 import os
 from datetime import datetime
 
-from face.ImageDetector import ImageDetector
 from database import db
+from face.ImageDetector import ImageDetector
 from models import CountInfo, ClassInfo, Test
 from utils import PER_PAGE
 from video.VideoService import VideoService
@@ -27,21 +27,22 @@ def save_to_db(detector, face_count, class_id, base_path):
     db.session.commit()
 
 
-def add_class(name, begin, end, days_of_week, total):
-    class_info = ClassInfo(name, begin, end, days_of_week, total)
+def add_class(name, begin, end, days_of_week, total, interval=5):
+    class_info = ClassInfo(name, begin, end, days_of_week, total, interval)
     db.session.add(class_info)
     db.session.flush()
     db.session.commit()
     return class_info
 
 
-def update_class(class_id, name, begin, end, days_of_week, total):
+def update_class(class_id, name, begin, end, days_of_week, total, interval):
     class_info = ClassInfo.query.get(class_id)
     class_info.name = name
     class_info.begin = begin
     class_info.end = end
     class_info.days_of_week = json.dumps(days_of_week)
     class_info.total = total
+    class_info.interval = interval
     db.session.commit()
     return class_info
 
