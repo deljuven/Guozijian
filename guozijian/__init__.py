@@ -9,8 +9,9 @@ from sqlalchemy.exc import IntegrityError
 
 from database import db
 from models import db
-from scheduler import init_scheduler, add_daily_scheduler, scheduler
-from utils import DB_URI, SQLITE_URI
+from scheduler import init_scheduler, scheduler, add_daily_scheduler
+from service import add_daily_job
+from utils import DB_URI, SQLITE_URI, RETRY
 
 app = Flask(__name__)
 # app.config['SQLALCHEMY_DATABASE_URI'] = DB_URI
@@ -54,8 +55,10 @@ with app.app_context():
 # app.config.from_object(Config())
 # scheduler.init_app(app)
 # scheduler.start()
-init_scheduler(app)
-add_daily_scheduler(APP_IMG_SAV_PATH)
-scheduler.start()
+if not app.debug or os.environ.get('WERKZEUG_RUN_MAIN') == 'true':
+    init_scheduler(app)
+    add_daily_scheduler(add_daily_job, APP_IMG_SAV_PATH, APP_PATH)
+    add_daily_job([APP_IMG_SAV_PATH, APP_PATH])
+    scheduler.start()
 
 import guozijian.views

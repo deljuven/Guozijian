@@ -4,11 +4,11 @@ from flask import render_template, redirect, url_for, request, jsonify
 from flask_login import login_required
 from flask_moment import Moment
 
-from guozijian import app, login_manager, APP_PATH
+from guozijian import app, login_manager, APP_IMG_SAV_PATH, APP_PATH
 from login import signin, signout, signup
 from models import User, LoginForm, RegistrationForm, CountInfo, ClassInfo, ClassForm
 from service import snapshot, delete_class, add_class, update_class, query_counts, schedule_class
-from utils import PER_PAGE, WEEKDAY_MAP
+from utils import PER_PAGE
 
 moment = Moment(app)
 
@@ -72,10 +72,9 @@ def new_class():
     if request.method == 'GET':
         return render_template("class_modifier.html", form=form)
     days_of_week.data = [int(t.encode("ascii")) for t in days_of_week.data]
-    tmp = {t: WEEKDAY_MAP[t] for t in days_of_week.data}
     if request.method == 'POST' and form.validate_on_submit():
         add_class(name=name.data, begin=begin.data, end=end.data, days_of_week=days_of_week.data, total=total.data,
-                  interval=interval.data)
+                  img_path=APP_IMG_SAV_PATH, app_path=APP_PATH, interval=interval.data)
         return redirect(url_for('class_list'))
     return render_template("class_modifier.html", form=form)
 
@@ -98,10 +97,10 @@ def change_class(class_id):
     elif request.method == "GET":
         return render_template("class_modifier.html", form=form, class_info=class_info, class_id=class_id)
     days_of_week.data = [int(t.encode("ascii")) for t in days_of_week.data]
-    tmp = {t: WEEKDAY_MAP[t] for t in days_of_week.data}
     if request.method == 'POST' and request.form['_method'] == 'PUT' and form.validate_on_submit():
         class_info = update_class(class_id=class_id, name=name.data, begin=begin.data, end=end.data,
-                                  days_of_week=days_of_week.data, total=total.data, interval=interval.data)
+                                  days_of_week=days_of_week.data, total=total.data, img_path=APP_IMG_SAV_PATH,
+                                  app_path=APP_PATH, interval=interval.data)
         return render_template("class_modifier.html", form=form, class_info=class_info, class_id=class_id)
     elif request.method == 'PUT':
         # class_info = update_class(id=class_id, name=name.data, begin=begin.data, end=end.data,
@@ -110,7 +109,8 @@ def change_class(class_id):
         # class_info = ClassInfo.query.get(class_id)
         if form.validate_on_submit():
             class_info = update_class(class_id=class_id, name=name.data, begin=begin.data, end=end.data,
-                                      days_of_week=days_of_week.data, total=total.data, interval=interval.data)
+                                      days_of_week=days_of_week.data, total=total.data, img_path=APP_IMG_SAV_PATH,
+                                      app_path=APP_PATH, interval=interval.data)
             return jsonify(class_info.serialize)
         return jsonify(form.errors)
     return render_template("class_modifier.html", form=form, class_info=class_info, class_id=class_id)
@@ -167,15 +167,15 @@ def counts():
 @login_required
 def on_snapshot():
     class_id = request.args.get('class', type=int)
-    error = snapshot(class_id, APP_PATH)
-    return jsonify(title=error)
+    msg = snapshot(class_id, APP_IMG_SAV_PATH, APP_PATH)
+    return jsonify(msg)
 
 
 @app.route('/latest')
 @login_required
 def latest():
-    latest = CountInfo.query.order_by(CountInfo.taken_at.desc()).limit(100).all()
-    return jsonify([i.serialize for i in latest])
+    latest_ = CountInfo.query.order_by(CountInfo.taken_at.desc()).limit(100).all()
+    return jsonify([i.serialize for i in latest_])
 
 
 @app.errorhandler(404)
