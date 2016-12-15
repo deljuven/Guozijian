@@ -167,8 +167,8 @@ def counts():
 @login_required
 def on_snapshot():
     class_id = request.args.get('class', type=int)
-    snapshot(class_id, APP_PATH)
-    return jsonify(title="hello world")
+    error = snapshot(class_id, APP_PATH)
+    return jsonify(title=error)
 
 
 @app.route('/latest')

@@ -7,12 +7,15 @@ from database import db
 from face.ImageDetector import ImageDetector
 from models import CountInfo, ClassInfo, Test
 from utils import PER_PAGE
-from video.VideoService import VideoService
+from video.VideoService import VideoService, VideoException
 
 
 def snapshot(class_id, base_path):
     vs = VideoService()
-    url = vs.take_picture()
+    try:
+        url = vs.take_picture()
+    except VideoException, e:
+        return e.message
     detector = ImageDetector(url, base_path)
     faces = detector.detect(4)
     save_to_db(detector, faces, class_id, base_path)
