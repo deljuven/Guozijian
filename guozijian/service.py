@@ -6,7 +6,7 @@ from datetime import datetime, date
 
 from database import db
 from face.ImageDetector import ImageDetector
-from models import CountInfo, ClassInfo, Test
+from models import CountInfo, ClassInfo
 from scheduler import scheduler
 from utils import PER_PAGE, RETRY
 from video.VideoService import VideoService, VideoException
@@ -33,8 +33,8 @@ def save_to_db(detector, face_count, class_id, app_path):
     db.session.commit()
 
 
-def add_class(name, begin, end, days_of_week, total, img_path, app_path, interval=5):
-    class_info = ClassInfo(name, begin, end, days_of_week, total, interval)
+def add_class(name, begin, end, days_of_week, total, img_path, app_path, creator, interval=5):
+    class_info = ClassInfo(name, begin, end, days_of_week, total, creator, interval)
     db.session.add(class_info)
     db.session.flush()
     db.session.commit()
@@ -79,12 +79,14 @@ def delete_class(class_id):
     db.session.commit()
 
 
-def query_class(name=None, days_of_week=None, page=1, per_page=PER_PAGE):
+def query_class(name=None, days_of_week=None, creator=None, page=1, per_page=PER_PAGE):
     query = ClassInfo.query
     if name is not None:
         query = query.filter(ClassInfo.name.like("%%%s%%" % name))
     if days_of_week is not None:
         query = query.filter_by(days_of_week=json.dumps(days_of_week))
+    if creator is not None:
+        query = query.filter_by(creator=creator)
     return query.paginate(page=page, per_page=per_page)
 
 
@@ -101,14 +103,6 @@ def query_counts(begin=None, end=None, class_id=None, name=None, page=1, per_pag
     if page == -1 and per_page == -1:
         return query.all()
     return query.paginate(page=page, per_page=per_page)
-
-
-def pong(class_id, start, finish):
-    test = Test(name="test_" + class_id)
-    print start, finish
-    db.session.add(test)
-    db.session.flush()
-    db.session.commit()
 
 
 def schedule_class():

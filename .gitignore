@@ -7,5 +7,6 @@ venv/
 *.pyc
 */*.pyc
 *.db
+*/db
 */*.db
 */static/data/img

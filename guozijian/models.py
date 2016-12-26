@@ -110,14 +110,16 @@ class ClassInfo(db.Model):
     days_of_week = db.Column("days_of_week", db.String(30), nullable=False)
     total = db.Column("total", db.Integer, nullable=False)
     interval = db.Column("interval", db.Integer, nullable=False, default=5)
+    creator = db.Column("creator", db.Integer, nullable=False)
 
-    def __init__(self, name, begin, end, days_of_week, total, interval=5):
+    def __init__(self, name, begin, end, days_of_week, total, creator, interval=5):
         self.name = name
         self.begin = begin
         self.end = end
         self.days_of_week = json.dumps(days_of_week)
         self.total = total
         self.interval = interval
+        self.creator = creator
 
     def __repr__(self):
         return '<Class %r>' % {'name': self.name.encode(), 'begin': self.begin.encode(), 'end': self.end.encode(),
@@ -171,25 +173,3 @@ class ClassForm(FlaskForm):
                                        validators=[validators.DataRequired()])
     total = IntegerField(label=u'班级人数', validators=[validators.DataRequired()])
     interval = IntegerField(label=u'拍照频率(分钟)', validators=[validators.DataRequired()])
-
-
-class Test(db.Model):
-    __tablename__ = 'test'
-    test_id = db.Column("id", db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column("name", db.String(100), unique=True, nullable=False)
-    create_time = db.Column("create_time", db.DateTime, nullable=False, default=datetime.now())
-
-    def __init__(self, name, create_time):
-        self.name = name
-        self.create_time = create_time
-
-    def __repr__(self):
-        return '<Test %r>' % {'name': self.name.encode(), 'create_time': self.create_time.encode()}
-
-    @property
-    def serialize(self):
-        return {
-            "id": self.class_id,
-            "name": self.name,
-            "create_time": self.create_time
-        }
