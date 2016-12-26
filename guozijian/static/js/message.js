@@ -7,6 +7,6 @@ $(document).ready(function () {
         source.close();
     });
     source.onmessage = function (e) {
-        alert(e.data);
+        console.info(e.data);
     }
 });

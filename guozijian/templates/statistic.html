@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% from "utils.html" import flash_message %}
 
-{% block title %}国子监-首页{% endblock %}
+{% block title %}国子监-监测详情{% endblock %}
 
 {% block styles %}
 {{ super() }}
@@ -16,9 +16,9 @@
     <div class="col-lg-10">
         <h1 class="page-header">控制面板</h1>
     </div>
-    <div class="col-lg-2">
-        <button type="button" class="btn btn-default vertical-center" onclick="snapshot({{class_id}})">拍照</button>
-    </div>
+    <!--<div class="col-lg-2">-->
+        <!--<button type="button" class="btn btn-default vertical-center" onclick="snapshot({{class_id}})">拍照</button>-->
+    <!--</div>-->
     <!-- /.col-lg-12 -->
 </div>
 <div id = "alert_placeholder"></div>

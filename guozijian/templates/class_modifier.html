@@ -2,7 +2,13 @@
 {% from "utils.html" import flash_message %}
 {% from "utils.html" import render_field %}
 
-{% block title %}国子监-编辑课程{% endblock %}
+{% block title %}
+{% if class_info is defined and class_info is not none %}
+国子监-编辑课程
+{% else %}
+国子监-添加课程
+{% endif %}
+{% endblock %}
 
 {% block styles %}
 {{ super() }}

@@ -101,8 +101,8 @@ def query_counts(begin=None, end=None, class_id=None, name=None, page=1, per_pag
     if end is not None:
         query = query.filter(CountInfo.taken_at < datetime.fromtimestamp(begin))
     if page == -1 and per_page == -1:
-        return query.all()
-    return query.paginate(page=page, per_page=per_page)
+        return query.order_by(CountInfo.class_id.desc()).all()
+    return query.order_by(CountInfo.class_id.desc()).paginate(page=page, per_page=per_page)
 
 
 def schedule_class():
