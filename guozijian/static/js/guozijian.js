@@ -19,19 +19,27 @@ function loadCounts(params) {
         params.success({
             total: data.total,
             rows: data.data
-        })
+        });
+        var max_height = Math.max($("#img_list").height(), $("#gallery").height());
+        $("#img_list").height(max_height);
+        $("#gallery").height(max_height);
     });
     var begin = new Date();
     begin.setDate(begin.getDate() - 3);
     params.data['begin'] = begin / 1000;
     $.get("counts", params.data).done(function (data) {
-        console.info(data.data.length)
         if (data.data.length > 0) {
             renderBar(data.data, 'morris-bar-chart');
             reanderArea(data.data, 'morris-area-chart');
             donut = renderDonut(data.data[0], 'morris-donut-chart', total);
             donut.select(0);
+            var max_height = Math.max($("#morris-bar-chart").height(), $("#morris-donut-chart").height());
+            $("#morris-bar-chart").height(max_height);
+            $("#morris-donut-chart").height(max_height);
         }
+        var max_height = Math.max($("#img_list").height(), $("#gallery").height());
+        $("#img_list").height(max_height);
+        $("#gallery").height(max_height);
     });
 }
 
@@ -42,5 +50,8 @@ $(document).ready(function () {
             donut.setData(genDonuts(element, total));
             donut.select(0);
         }
+        var max_height = Math.max($("#img_list").height(), $("#gallery").height());
+        $("#img_list").height(max_height);
+        $("#gallery").height(max_height);
     });
 });

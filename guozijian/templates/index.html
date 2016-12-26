@@ -13,14 +13,14 @@
 
 {% block page_content %}
 <div class="row row-eq-height">
-    <div class="col-lg-10">
+    <div class="col-lg-10 col-md-10 col-xs-12">
         <h1 class="page-header">Dashboard</h1>
     </div>
     <!-- /.col-lg-12 -->
 </div>
 
 <div class="row row-eq-height" id="last_week">
-    <div class="col-lg-12 col-md-12">
+    <div class="col-lg-12 col-md-12 col-xs-12">
         <div class="panel panel-primary">
             <div class="panel-heading">
                 <i class="fa fa-bar-chart-o fa-fw"></i>一周内统计
@@ -28,20 +28,16 @@
                 </div>
             </div>
             <!-- /.panel-heading -->
-            <div class="row row-eq-height">
-                <div class="col-lg-6 col-md-6">
+            <div class="row">
+                <div class="col-lg-6 col-md-6 col-xs-12">
                     <div class="panel panel-default panel-eq-height">
                         <div id="morris-bar-chart"></div>
                     </div>
                     <!-- /.panel -->
                 </div>
-                <div class="col-lg-6">
+                <div class="col-lg-6 col-md-6 col-xs-12">
                     <div class="panel panel-default panel-eq-height">
-                        <!-- /.panel-heading -->
-                        <div class="panel-body">
-                            <div id="morris-area-chart"></div>
-                        </div>
-                        <!-- /.panel-body -->
+                        <div id="morris-area-chart"></div>
                     </div>
                 </div>
             </div>
@@ -51,8 +47,8 @@
     <!-- /.col-lg-4 (nested) -->
 </div>
 
-<div class="row row-eq-height">
-    <div class="col-lg-12 col-md-12">
+<div class="row row-eq-height" id="history">
+    <div class="col-lg-12 col-md-12 col-xs-12">
         <div class="panel panel-primary">
             <div class="panel-heading">
                 <i class="fa fa-bar-chart-o fa-fw"></i>历史统计
@@ -60,19 +56,17 @@
                 </div>
             </div>
             <!-- /.panel-heading -->
-            <div class="row row-eq-height">
-                <div class="col-lg-6 col-md-6">
+            <div class="row">
+                <div class="col-lg-6 col-md-6 col-xs-12">
                     <div class="panel panel-default panel-eq-height">
                         <div id="history-bar-chart"></div>
                     </div>
                     <!-- /.panel -->
                 </div>
-                <div class="col-lg-6">
+                <div class="col-lg-6 col-md-6 col-xs-12">
                     <div class="panel panel-default panel-eq-height">
                         <!-- /.panel-heading -->
-                        <div class="panel-body">
-                            <div id="history-area-chart"></div>
-                        </div>
+                        <div id="history-area-chart"></div>
                         <!-- /.panel-body -->
                     </div>
                 </div>
