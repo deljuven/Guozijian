@@ -113,7 +113,7 @@ def change_class(class_id):
             class_info = update_class(class_id=class_id, name=name.data, begin=begin.data, end=end.data,
                                       days_of_week=days_of_week.data, total=total.data, img_path=APP_IMG_SAV_PATH,
                                       app_path=APP_PATH, interval=interval.data)
-            return jsonify(class_info.serialize)
+            return redirect(url_for('class_list'))
         return jsonify(form.errors)
     return render_template("class_modifier.html", form=form, class_info=class_info, class_id=class_id)
 
@@ -202,5 +202,14 @@ def msg():
     def generator():
         return "data: pong\n\n"
 
+    # 注意响应头中的content_type
+    return Response(generator(), content_type='text/event-stream')
+
+
+@app.route("/msg_refresh")
+def refresh():
+    def generator():
+        return "data: success\n\n"
+    app.logger.info("refresh")
     # 注意响应头中的content_type
     return Response(generator(), content_type='text/event-stream')

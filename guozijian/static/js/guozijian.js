@@ -43,6 +43,10 @@ function loadCounts(params) {
     });
 }
 
+function refreshTable() {
+    $('#table').bootstrapTable('refresh', {silent: true});
+}
+
 $(document).ready(function () {
     $('#table').on('click-cell.bs.table', function (field, value, row, element) {
         $("#gallery").attr("src", element.uri);
@@ -54,4 +58,6 @@ $(document).ready(function () {
         $("#img_list").height(max_height);
         $("#gallery").height(max_height);
     });
+
+    onMessage("/msg_refresh", refreshTable);
 });

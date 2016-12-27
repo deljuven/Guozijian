@@ -33,7 +33,7 @@ def save_to_db(detector, face_count, class_id, app_path):
     db.session.commit()
 
 
-def add_class(name, begin, end, days_of_week, total, img_path, app_path, creator, interval=5):
+def add_class(name, begin, end, days_of_week, total, img_path, app_path, creator, interval=5, refresh_msg=None):
     class_info = ClassInfo(name, begin, end, days_of_week, total, creator, interval)
     db.session.add(class_info)
     db.session.flush()
@@ -41,6 +41,8 @@ def add_class(name, begin, end, days_of_week, total, img_path, app_path, creator
     today = datetime.today()
     if today.weekday() in json.loads(class_info.days_of_week):
         args = [img_path, app_path]
+        if refresh_msg:
+            args = [args] + [refresh_msg]
         begin = map(int, begin.split(":"))
         end = map(int, end.split(":"))
         start = today.replace(hour=begin[0], minute=(begin[1] + 59) % 60)
@@ -51,7 +53,7 @@ def add_class(name, begin, end, days_of_week, total, img_path, app_path, creator
     return class_info
 
 
-def update_class(class_id, name, begin, end, days_of_week, total, img_path, app_path, interval):
+def update_class(class_id, name, begin, end, days_of_week, total, img_path, app_path, interval, refresh_msg=None):
     class_info = ClassInfo.query.get(class_id)
     class_info.name = name
     class_info.begin = begin
@@ -63,6 +65,8 @@ def update_class(class_id, name, begin, end, days_of_week, total, img_path, app_
     today = datetime.today()
     if today.weekday() in json.loads(class_info.days_of_week):
         args = [img_path, app_path]
+        if refresh_msg:
+            args = [args] + [refresh_msg]
         begin = map(int, begin.split(":"))
         end = map(int, end.split(":"))
         start = today.replace(hour=begin[0], minute=(begin[1] + 59) % 60)
@@ -101,8 +105,8 @@ def query_counts(begin=None, end=None, class_id=None, name=None, page=1, per_pag
     if end is not None:
         query = query.filter(CountInfo.taken_at < datetime.fromtimestamp(begin))
     if page == -1 and per_page == -1:
-        return query.order_by(CountInfo.class_id.desc()).all()
-    return query.order_by(CountInfo.class_id.desc()).paginate(page=page, per_page=per_page)
+        return query.order_by(CountInfo.count_id.desc()).all()
+    return query.order_by(CountInfo.count_id.desc()).paginate(page=page, per_page=per_page)
 
 
 def schedule_class():
@@ -117,6 +121,8 @@ def snapshot_job(args):
         db.app = scheduler.app
         db.init_app(scheduler.app)
     snapshot(args[0], args[1], args[2])
+    if len(args) == 4:
+        args[4]()
 
 
 def add_daily_job(args):
