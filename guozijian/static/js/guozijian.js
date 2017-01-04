@@ -24,9 +24,10 @@ function loadCounts(params) {
         $("#img_list").height(max_height);
         $("#gallery").height(max_height);
     });
-    var begin = new Date();
-    begin.setDate(begin.getDate() - 3);
-    params.data['begin'] = begin / 1000;
+    // var donut_params = params.data;
+    // donut_params['last'] = 3;
+    // delete donut_params['offset'];
+    // delete donut_params['limit'];
     $.get("counts", params.data).done(function (data) {
         if (data.data.length > 0) {
             renderBar(data.data, 'morris-bar-chart');
