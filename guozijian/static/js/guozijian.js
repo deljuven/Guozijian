@@ -12,7 +12,7 @@ function snapshot(class_id) {
     });
 }
 
-var donut;
+var donut, bar, area;
 
 function loadCounts(params) {
     $.get("counts", params.data).done(function (data) {
@@ -24,15 +24,25 @@ function loadCounts(params) {
         $("#img_list").height(max_height);
         $("#gallery").height(max_height);
     });
-    // var donut_params = params.data;
-    // donut_params['last'] = 3;
-    // delete donut_params['offset'];
-    // delete donut_params['limit'];
-    $.get("counts", params.data).done(function (data) {
+    var donut_params = params.data;
+    donut_params['last'] = 3;
+    delete donut_params['offset'];
+    delete donut_params['limit'];
+    $.get("counts", donut_params).done(function (data) {
         if (data.data.length > 0) {
-            renderBar(data.data, 'morris-bar-chart');
-            reanderArea(data.data, 'morris-area-chart');
-            donut = renderDonut(data.data[0], 'morris-donut-chart', total);
+            if (bar) {
+                bar.setData(genData(data.data));
+            } else
+                bar = renderBar(data.data, 'morris-bar-chart');
+            if (area) {
+                area.setData(genData(data.data));
+            } else
+                area = reanderArea(data.data, 'morris-area-chart');
+            if (donut) {
+                donut.setData(genDonuts(data.data[0], total));
+            } else {
+                donut = renderDonut(data.data[0], 'morris-donut-chart', total);
+            }
             donut.select(0);
             var max_height = Math.max($("#morris-bar-chart").height(), $("#morris-donut-chart").height());
             $("#morris-bar-chart").height(max_height);

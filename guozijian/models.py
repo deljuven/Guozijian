@@ -95,7 +95,7 @@ class CountInfo(db.Model):
             "id": self.count_id,
             "name": self.name,
             "uri": self.uri,
-            "taken_at": self.taken_at.strftime("%Y-%m-%d %H:%M"),
+            "taken_at": self.taken_at,
             "count": self.count,
             "class_id": self.class_id
         }

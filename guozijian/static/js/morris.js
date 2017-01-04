@@ -21,7 +21,7 @@ Date.prototype.yyyymmmddMMHH = function () {
 };
 
 function reanderArea(counts, id) {
-    Morris.Area({
+    return Morris.Area({
         element: id,
         data: genData(counts),
         xkey: 'date',
@@ -46,7 +46,7 @@ function renderDonut(count, id, total) {
 }
 
 function renderBar(counts, id) {
-    Morris.Bar({
+    return Morris.Bar({
         element: id,
         data: genData(counts),
         xkey: 'date',
@@ -63,6 +63,8 @@ function genDonuts(count, total) {
 
 function genData(counts) {
     return $.map(counts, function (item) {
-        return {date: new Date(item.taken_at).yyyymmmddMMHH(), count: item ? item.count : Math.random() * 100}
+        var value = {date: new Date(item.taken_at).yyyymmmddMMHH(), count: item ? item.count : Math.random() * 100};
+        console.info(value);
+        return value;
     });
 }

@@ -94,12 +94,34 @@ def query_class(name=None, days_of_week=None, creator=None, page=1, per_page=PER
     return query.paginate(page=page, per_page=per_page)
 
 
-def query_counts(begin=None, end=None, class_id=None, name=None, page=1, per_page=PER_PAGE):
+def query_counts(begin=None, end=None, class_id=None, name=None, last=None, page=1, per_page=PER_PAGE):
     query = CountInfo.query
     if name:
         query = query.filter(CountInfo.name.like("%%%s%%" % name))
     if class_id:
         query = query.filter_by(class_id=class_id)
+        if last:
+            min_query = query
+            all_counts = min_query.order_by(CountInfo.taken_at.desc()).all()
+            if len(all_counts) == 0:
+                return query.order_by(CountInfo.count_id.desc()).all()
+            mins = [datetime.min] * last
+            min_ = datetime.max
+            for item in all_counts:
+                taken = datetime.strptime(item.taken_at.strftime("%Y-%m-%d"), "%Y-%m-%d")
+                change = False
+                if taken > mins[0]:
+                    taken, mins[0] = mins[0], taken
+                    change = True
+                if taken > mins[1]:
+                    taken, mins[1] = mins[1], taken
+                    change = True
+                if taken > mins[2]:
+                    taken, mins[2] = mins[2], taken
+                    change = True
+                if change and item.taken_at < min_:
+                    min_ = item.taken_at
+            query = query.filter(CountInfo.taken_at >= min_)
     if begin is not None:
         query = query.filter(CountInfo.taken_at >= datetime.fromtimestamp(begin))
     if end is not None:

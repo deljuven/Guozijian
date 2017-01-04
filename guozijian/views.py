@@ -146,7 +146,7 @@ def statistic():
     class_id = request.args.get('class', type=int)
     if class_id is None:
         return redirect(url_for('class_list'))
-    count = CountInfo.query.filter_by(class_id=class_id).first()
+    count = CountInfo.query.filter_by(class_id=class_id).order_by(CountInfo.count_id.desc()).first()
     total = ClassInfo.query.get(class_id).total
     return render_template("statistic.html", count=count, class_id=class_id, total=total)
 
@@ -155,13 +155,14 @@ def statistic():
 @login_required
 def counts():
     class_id = request.args.get('class', type=int)
-    offset = request.args.get('offset', type=int, default=0)
-    per_page = request.args.get('limit', type=int, default=PER_PAGE)
+    offset = request.args.get('offset', type=int, default=-1)
+    per_page = request.args.get('limit', type=int, default=-1)
     name = request.args.get('name')
     begin = request.args.get('begin', type=float)
     end = request.args.get('end', type=float)
+    last = request.args.get('last', type=int)
     page = offset / per_page + 1
-    data = query_counts(begin=begin, end=end, class_id=class_id, name=name, page=page, per_page=per_page)
+    data = query_counts(begin=begin, end=end, class_id=class_id, name=name, last=last, page=page, per_page=per_page)
     return jsonify(total=data.total, data=[i.serialize for i in data.items])
 
 
@@ -210,6 +211,7 @@ def msg():
 def refresh():
     def generator():
         return "data: success\n\n"
+
     app.logger.info("refresh")
     # 注意响应头中的content_type
     return Response(generator(), content_type='text/event-stream')
