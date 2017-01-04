@@ -14,19 +14,19 @@ from utils import WEEKDAYS, WEEKDAY_MAP
 
 
 class LoginForm(FlaskForm):
-    username = StringField('User Name', [validators.DataRequired()])
-    passwd = PasswordField('Password', [validators.DataRequired()])
+    username = StringField(u'用户名', [validators.DataRequired()])
+    passwd = PasswordField(u'密码', [validators.DataRequired()])
 
 
 class RegistrationForm(FlaskForm):
-    username = StringField('User Name', [validators.DataRequired()])
-    email = StringField('email', [validators.DataRequired()])
-    passwd = PasswordField('New Password', [
+    username = StringField(u'用户名', [validators.DataRequired()])
+    email = StringField(u'电子邮箱', [validators.DataRequired()])
+    passwd = PasswordField(u'密码', [
         validators.DataRequired(),
-        validators.EqualTo('confirm', message='Passwords must match')
+        validators.EqualTo(u'确认密码', message=u'密码必须匹配')
     ])
-    confirm = PasswordField('Repeat Password')
-    accept_tos = BooleanField('I accept the ToS', [validators.DataRequired()])
+    confirm = PasswordField(u'确认密码')
+    accept_tos = BooleanField(u'我已经阅读服务条款并接受', [validators.DataRequired()])
 
 
 class User(db.Model, UserMixin):
