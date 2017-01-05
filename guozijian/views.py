@@ -1,13 +1,16 @@
 # -*- coding: utf-8 -*-
 
+import time
+
 from flask import render_template, redirect, url_for, request, jsonify, Response
 from flask_login import login_required, current_user
 from flask_moment import Moment
 
-from guozijian import app, login_manager, APP_IMG_SAV_PATH, APP_PATH
+from app import app, APP_IMG_SAV_PATH, APP_PATH
+from guozijian import login_manager
 from login import signin, signout, signup
 from models import User, LoginForm, RegistrationForm, CountInfo, ClassInfo, ClassForm
-from service import snapshot, delete_class, add_class, update_class, query_counts, schedule_class, query_class
+from service import delete_class, add_class, update_class, query_counts, schedule_class, query_class
 from utils import PER_PAGE
 
 moment = Moment(app)
@@ -75,7 +78,8 @@ def new_class():
     days_of_week.data = [int(t.encode("ascii")) for t in days_of_week.data]
     if request.method == 'POST' and form.validate_on_submit():
         add_class(name=name.data, begin=begin.data, end=end.data, days_of_week=days_of_week.data, total=total.data,
-                  img_path=APP_IMG_SAV_PATH, app_path=APP_PATH, creator=current_user.user_id, interval=interval.data)
+                  img_path=APP_IMG_SAV_PATH, app_path=APP_PATH, creator=current_user.user_id, interval=interval.data,
+                  refresh_msg=refresh)
         return redirect(url_for('class_list'))
     return render_template("class_modifier.html", form=form)
 
@@ -105,10 +109,6 @@ def change_class(class_id):
                                   app_path=APP_PATH, interval=interval.data)
         return render_template("class_modifier.html", form=form, class_info=class_info, class_id=class_id)
     elif request.method == 'PUT':
-        # class_info = update_class(id=class_id, name=name.data, begin=begin.data, end=end.data,
-        #                           days_of_week=days_of_week.data, total=total.data)
-        # return render_template("class_modifier.html", form=form, class_info=class_info)
-        # class_info = ClassInfo.query.get(class_id)
         if form.validate_on_submit():
             class_info = update_class(class_id=class_id, name=name.data, begin=begin.data, end=end.data,
                                       days_of_week=days_of_week.data, total=total.data, img_path=APP_IMG_SAV_PATH,
@@ -155,7 +155,7 @@ def statistic():
 @login_required
 def counts():
     class_id = request.args.get('class', type=int)
-    offset = request.args.get('offset', type=int, default=-1)
+    offset = request.args.get('offset', type=int, default=0)
     per_page = request.args.get('limit', type=int, default=-1)
     name = request.args.get('name')
     begin = request.args.get('begin', type=float)
@@ -163,15 +163,20 @@ def counts():
     last = request.args.get('last', type=int)
     page = offset / per_page + 1
     data = query_counts(begin=begin, end=end, class_id=class_id, name=name, last=last, page=page, per_page=per_page)
-    return jsonify(total=data.total, data=[i.serialize for i in data.items])
+    items = data['data']
+    return jsonify(total=data['total'], data=[i.serialize for i in items])
 
 
 @app.route('/snapshot')
 @login_required
 def on_snapshot():
     class_id = request.args.get('class', type=int)
-    msg = snapshot(class_id, APP_IMG_SAV_PATH, APP_PATH)
-    return jsonify(msg)
+    # faces = snapshot(class_id, APP_IMG_SAV_PATH, APP_PATH)
+    faces = 1
+    total = ClassInfo.query.get(class_id).total
+    if faces < total - 1:
+        app.logger.info('snap test')
+    return jsonify(faces)
 
 
 @app.route('/latest')
@@ -201,9 +206,8 @@ def test():
 @app.route("/msg")
 def msg():
     def generator():
-        return "data: pong\n\n"
+        return "data: %s\n\n" % "pong"
 
-    # 注意响应头中的content_type
     return Response(generator(), content_type='text/event-stream')
 
 
@@ -212,6 +216,4 @@ def refresh():
     def generator():
         return "data: success\n\n"
 
-    app.logger.info("refresh")
-    # 注意响应头中的content_type
     return Response(generator(), content_type='text/event-stream')

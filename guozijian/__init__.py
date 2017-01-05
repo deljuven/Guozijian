@@ -2,32 +2,14 @@
 import os
 from datetime import datetime
 
-from flask import Flask
 from flask_bootstrap import Bootstrap
 from flask_user import LoginManager
 from sqlalchemy.exc import IntegrityError
 
 from database import db
-from models import db
 from scheduler import init_scheduler, scheduler, add_daily_scheduler
 from service import add_daily_job
-from utils import DB_URI, SQLITE_URI, RETRY
-
-app = Flask(__name__)
-# app.config['SQLALCHEMY_DATABASE_URI'] = DB_URI
-app.config['SQLALCHEMY_DATABASE_URI'] = SQLITE_URI
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
-# app.debug = True;
-# app.use_reloader = True;
-
-APP_IMG_SAV_PATH = os.path.join(app.root_path, 'static', 'data', 'img')
-APP_PATH = app.root_path
-DB_PATH = os.path.join(app.root_path, 'db')
-
-if not os.path.exists(APP_IMG_SAV_PATH):
-    os.makedirs(APP_IMG_SAV_PATH)
-if not os.path.exists(DB_PATH):
-    os.makedirs(DB_PATH)
+from app import app, APP_PATH, APP_IMG_SAV_PATH
 
 bootstrap = Bootstrap(app)
 
@@ -51,6 +33,8 @@ with app.app_context():
     except IntegrityError as ex:
         app.logger.info(ex.message)
 
+import guozijian.views
+
 # from flask_scheduler import Config, scheduler
 # app.config.from_object(Config())
 # scheduler.init_app(app)
@@ -61,4 +45,3 @@ if not app.debug or os.environ.get('WERKZEUG_RUN_MAIN') == 'true':
     add_daily_job([APP_IMG_SAV_PATH, APP_PATH])
     scheduler.start()
 
-import guozijian.views

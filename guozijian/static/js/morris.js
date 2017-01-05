@@ -64,7 +64,6 @@ function genDonuts(count, total) {
 function genData(counts) {
     return $.map(counts, function (item) {
         var value = {date: new Date(item.taken_at).yyyymmmddMMHH(), count: item ? item.count : Math.random() * 100};
-        console.info(value);
         return value;
     });
 }

@@ -2,7 +2,8 @@
 from flask import flash, session
 from flask_login import login_user, logout_user
 
-from guozijian import login_manager, db
+from guozijian import login_manager
+from database import db
 from models import User
 
 

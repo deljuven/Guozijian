@@ -2,7 +2,6 @@
 
 import json
 import time
-from datetime import datetime
 
 from flask_user import UserMixin
 from flask_wtf import FlaskForm

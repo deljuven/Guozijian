@@ -21,7 +21,7 @@ def snapshot(class_id, img_path, app_path):
     detector = ImageDetector(url, img_path)
     faces = detector.detect(4)
     save_to_db(detector, faces, class_id, app_path)
-    return {'success': True}
+    return faces
 
 
 def save_to_db(detector, face_count, class_id, app_path):
@@ -96,6 +96,7 @@ def query_class(name=None, days_of_week=None, creator=None, page=1, per_page=PER
 
 def query_counts(begin=None, end=None, class_id=None, name=None, last=None, page=1, per_page=PER_PAGE):
     query = CountInfo.query
+    result = {'total': 0, 'data': []}
     if name:
         query = query.filter(CountInfo.name.like("%%%s%%" % name))
     if class_id:
@@ -104,7 +105,10 @@ def query_counts(begin=None, end=None, class_id=None, name=None, last=None, page
             min_query = query
             all_counts = min_query.order_by(CountInfo.taken_at.desc()).all()
             if len(all_counts) == 0:
-                return query.order_by(CountInfo.count_id.desc()).all()
+                counts = query.order_by(CountInfo.count_id.desc()).all()
+                result['total'] = len(counts)
+                result['data'] = counts
+                return result
             mins = [datetime.min] * last
             min_ = datetime.max
             for item in all_counts:
@@ -126,9 +130,15 @@ def query_counts(begin=None, end=None, class_id=None, name=None, last=None, page
         query = query.filter(CountInfo.taken_at >= datetime.fromtimestamp(begin))
     if end is not None:
         query = query.filter(CountInfo.taken_at < datetime.fromtimestamp(begin))
-    if page == -1 and per_page == -1:
-        return query.order_by(CountInfo.count_id.desc()).all()
-    return query.order_by(CountInfo.count_id.desc()).paginate(page=page, per_page=per_page)
+    if per_page == -1:
+        counts = query.order_by(CountInfo.count_id.desc()).all()
+        result['total'] = len(counts)
+        result['data'] = counts
+    else:
+        counts = query.order_by(CountInfo.count_id.desc()).paginate(page=page, per_page=per_page)
+        result['total'] = counts.total
+        result['data'] = counts.items
+    return result
 
 
 def schedule_class():
@@ -144,7 +154,7 @@ def snapshot_job(args):
         db.init_app(scheduler.app)
     snapshot(args[0], args[1], args[2])
     if len(args) == 4:
-        args[4]()
+        args[3]()
 
 
 def add_daily_job(args):
