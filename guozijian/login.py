@@ -1,13 +1,15 @@
 # -*- coding: utf-8 -*-
 from flask import flash, session
-from flask_login import login_user, logout_user
+from flask_login import login_user, logout_user, LoginManager
 
-from guozijian import login_manager
 from database import db
 from models import User
 
 
-def signin(username, passwd, form):
+login_manager = LoginManager()
+
+
+def signin(username, passwd):
     user = User.query.filter_by(name=username, password=passwd).first()
     if user is None:
         session.pop('_flashes', None)

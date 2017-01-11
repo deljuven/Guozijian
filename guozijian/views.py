@@ -1,17 +1,17 @@
 # -*- coding: utf-8 -*-
-
-import time
-
-from flask import render_template, redirect, url_for, request, jsonify, Response
+from flask import render_template, redirect, url_for, request, jsonify
 from flask_login import login_required, current_user
 from flask_moment import Moment
+from flask_socketio import emit, join_room
 
-from app import app, APP_IMG_SAV_PATH, APP_PATH
-from guozijian import login_manager
-from login import signin, signout, signup
+from app import app, APP_IMG_SAV_PATH, APP_PATH, socketio
+from login import signin, signout, signup, login_manager
 from models import User, LoginForm, RegistrationForm, CountInfo, ClassInfo, ClassForm
-from service import delete_class, add_class, update_class, query_counts, schedule_class, query_class
-from utils import PER_PAGE
+from service import delete_class, add_class, update_class, query_counts, query_class, read_msgs
+from utils import PER_PAGE, DEFAULT_NOTIFICATION, REFRESH_NOTIFICATION
+
+# import eventlet
+# eventlet.monkey_patch()
 
 moment = Moment(app)
 
@@ -29,7 +29,7 @@ def home():
 @app.route('/index')
 @login_required
 def index():
-    return render_template("index.html")
+    return render_template("index.html", user=current_user.user_id)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -38,7 +38,7 @@ def login():
     if form.validate_on_submit():
         name = form.username.data
         password = form.passwd.data
-        if signin(name, password, form):
+        if signin(name, password):
             return redirect(url_for('index'))
         return render_template("login.html", form=form)
     return render_template("login.html", form=form, users=User.query.all())
@@ -78,8 +78,7 @@ def new_class():
     days_of_week.data = [int(t.encode("ascii")) for t in days_of_week.data]
     if request.method == 'POST' and form.validate_on_submit():
         add_class(name=name.data, begin=begin.data, end=end.data, days_of_week=days_of_week.data, total=total.data,
-                  img_path=APP_IMG_SAV_PATH, app_path=APP_PATH, creator=current_user.user_id, interval=interval.data,
-                  refresh_msg=refresh)
+                  img_path=APP_IMG_SAV_PATH, app_path=APP_PATH, creator=current_user.user_id, interval=interval.data)
         return redirect(url_for('class_list'))
     return render_template("class_modifier.html", form=form)
 
@@ -196,24 +195,55 @@ def unauthorized_callback():
     return redirect('/login?next=' + request.path)
 
 
-@app.route('/test')
-@login_required
-def test():
-    tests = schedule_class()
-    return jsonify({"class": [i.serialize for i in tests], "current": current_user.user_id})
-
-
 @app.route("/msg")
-def msg():
-    def generator():
-        return "data: %s\n\n" % "pong"
-
-    return Response(generator(), content_type='text/event-stream')
+def messages():
+    return jsonify({'msgs': read_msgs(current_user.user_id)})
 
 
-@app.route("/msg_refresh")
-def refresh():
-    def generator():
-        return "data: success\n\n"
+@socketio.on('connect', namespace=DEFAULT_NOTIFICATION)
+def notification_connect():
+    if current_user.is_authenticated:
+        emit('test', {'data': 'Connected'}, namespace=DEFAULT_NOTIFICATION)
+        # room = json['user']
+        # join_room(room)
+        # emit('connect', {'data': 'Connected %d' % room}, namespace=DEFAULT_NOTIFICATION)
+    else:
+        return False
 
-    return Response(generator(), content_type='text/event-stream')
+
+@socketio.on('disconnect', namespace=DEFAULT_NOTIFICATION)
+def notification_disconnect():
+    # room = json['user']
+    # leave_room(room)
+    print 'Disconnected %d' % 123
+    # emit('disconnect', {'data': 'Disconnected %d' % room}, namespace=DEFAULT_NOTIFICATION)
+
+
+@socketio.on('connect', namespace=REFRESH_NOTIFICATION)
+def snapshot_connect():
+    if current_user.is_authenticated:
+        emit('connect', {'data': 'Connected'}, namespace=REFRESH_NOTIFICATION)
+    else:
+        return False
+
+
+@socketio.on('join', namespace=REFRESH_NOTIFICATION)
+def snapshot_join(room):
+    join_room(room)
+    emit('connect', {'data': 'Join room %d' % room}, namespace=REFRESH_NOTIFICATION)
+
+
+@socketio.on('disconnect', namespace=REFRESH_NOTIFICATION)
+def snapshot_disconnect():
+    print 'Disconnected %d' % 123
+
+
+@socketio.on('warning', namespace=DEFAULT_NOTIFICATION)
+def warning(json):
+    msgs = read_msgs(json.user_id)
+    emit('warning', {'data': [msg.serialize for msg in msgs]}, namespace=DEFAULT_NOTIFICATION)
+
+
+@app.route('/test')
+def test():
+    emit('test', {'data': 'Connected'}, namespace=DEFAULT_NOTIFICATION)

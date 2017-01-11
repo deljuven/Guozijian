@@ -109,21 +109,23 @@ class ClassInfo(db.Model):
     days_of_week = db.Column("days_of_week", db.String(30), nullable=False)
     total = db.Column("total", db.Integer, nullable=False)
     interval = db.Column("interval", db.Integer, nullable=False, default=5)
+    warning = db.Column("warning", db.Integer, nullable=False, default=50)
     creator = db.Column("creator", db.Integer, nullable=False)
 
-    def __init__(self, name, begin, end, days_of_week, total, creator, interval=5):
+    def __init__(self, name, begin, end, days_of_week, total, creator, warning=50, interval=5):
         self.name = name
         self.begin = begin
         self.end = end
         self.days_of_week = json.dumps(days_of_week)
         self.total = total
         self.interval = interval
+        self.warning = warning
         self.creator = creator
 
     def __repr__(self):
         return '<Class %r>' % {'name': self.name.encode(), 'begin': self.begin.encode(), 'end': self.end.encode(),
                                'days_of_week': json.loads(self.days_of_week), 'total': self.total,
-                               'interval': self.interval}
+                               'warning': self.warning, 'interval': self.interval}
 
     @property
     def serialize(self):
@@ -136,6 +138,7 @@ class ClassInfo(db.Model):
             "days_of_week": days,
             "days": self.days_of_week,
             "total": self.total,
+            "warning": self.warning,
             "interval": self.interval
         }
 
@@ -171,4 +174,34 @@ class ClassForm(FlaskForm):
     days_of_week = SelectMultipleField(label=u'每周上课时间', choices=WEEKDAYS,
                                        validators=[validators.DataRequired()])
     total = IntegerField(label=u'班级人数', validators=[validators.DataRequired()])
-    interval = IntegerField(label=u'拍照频率(分钟)', validators=[validators.DataRequired()])
+    interval = IntegerField(label=u'监测频率(分钟)', validators=[validators.DataRequired()])
+    warning = IntegerField(label=u'当低于该百分比时系统发出通知', validators=[validators.DataRequired()])
+
+
+class Message(db.Model):
+    __tablename__ = 'message'
+    msg_id = db.Column("id", db.Integer, primary_key=True, autoincrement=True)
+    msg_type = db.Column("type", db.Integer, nullable=False)
+    extra = db.Column("extra", db.String(100), nullable=False)
+    msg_to = db.Column("to", db.Integer, nullable=False)
+    class_id = db.Column("class", db.Integer, nullable=False)
+
+    def __init__(self, msg_type, extra, msg_to, class_id):
+        self.msg_type = msg_type
+        self.extra = extra
+        self.msg_to = msg_to
+        self.class_id = class_id
+
+    def __repr__(self):
+        return '<Message %r>' % {'id': self.msg_id, 'type': self.msg_type, 'extra': self.extra.encode(),
+                                 'to': self.msg_to, 'class_id': self.class_id}
+
+    @property
+    def serialize(self):
+        return {
+            "id": self.msg_id,
+            "type": self.msg_type,
+            "extra": self.extra,
+            "to": self.msg_to,
+            "class": self.class_id
+        }

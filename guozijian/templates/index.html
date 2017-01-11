@@ -88,6 +88,7 @@
 <script type=text/javascript src="{{url_for('static', filename='js/morris.js')}}"></script>
 <script type=text/javascript src="{{url_for('static', filename='js/index.js')}}"></script>
 <script type=text/javascript src="{{url_for('static', filename='js/message.js')}}"></script>
+<script type=text/javascript src="{{url_for('static', filename='vendor/socket.io/socket.io.min.js')}}"></script>
 
 <script type=text/javascript>
     $(document).ready(function () {
@@ -96,7 +97,7 @@
         begin.setDate(begin.getDate() - 7);
         params['begin'] = begin.getTime() / 1000;
         loadIndex(params);
-//        onMessage("/msg_refresh");
+        onMessage("/notifications", {{ user }}, "WARN");
     });
 </script>
 {% endblock scripts %}

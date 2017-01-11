@@ -111,6 +111,15 @@
                             {{ form.interval(class_="form-control", placeholder="5", value="5", autofocus=true, required=true) }}
                             {% endif %}
                         </div>
+                        {{ render_field(form.warning) }}
+                        <div class="form-group">
+                            {% if class_info is defined and class_info is not none %}
+                            {{ form.warning(class_="form-control", value=class_info.warning, autofocus=true, required=true)
+                            }}
+                            {% else %}
+                            {{ form.warning(class_="form-control", placeholder="5", value="5", autofocus=true, required=true) }}
+                            {% endif %}
+                        </div>
                         <!-- Change this to a button or input when using this as a form -->
                         <div class="row">
                             <div class="col-lg-6 col-md-6 col-xs-6">

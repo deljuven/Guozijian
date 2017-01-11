@@ -4,11 +4,16 @@ import os
 import time
 from datetime import datetime, date
 
+import eventlet
+from flask_socketio import emit
+
+from app import app
 from database import db
 from face.ImageDetector import ImageDetector
-from models import CountInfo, ClassInfo
+from models import CountInfo, ClassInfo, Message
 from scheduler import scheduler
-from utils import PER_PAGE, RETRY
+from utils import PER_PAGE, RETRY, WARN_LEVEL, WARN_EVENT, DEFAULT_NOTIFICATION, SNAPSHOT, SNAPSHOT_NEW, \
+    REFRESH_NOTIFICATION
 from video.VideoService import VideoService, VideoException
 
 
@@ -20,8 +25,9 @@ def snapshot(class_id, img_path, app_path):
         return {'success': False, 'err': e.message}
     detector = ImageDetector(url, img_path)
     faces = detector.detect(4)
-    save_to_db(detector, faces, class_id, app_path)
-    return faces
+    count = save_to_db(detector, faces, class_id, app_path)
+    class_info = ClassInfo.query().get(class_id)
+    broadcast(class_info, count)
 
 
 def save_to_db(detector, face_count, class_id, app_path):
@@ -31,18 +37,17 @@ def save_to_db(detector, face_count, class_id, app_path):
     db.session.add(count)
     db.session.flush()
     db.session.commit()
+    return count
 
 
-def add_class(name, begin, end, days_of_week, total, img_path, app_path, creator, interval=5, refresh_msg=None):
-    class_info = ClassInfo(name, begin, end, days_of_week, total, creator, interval)
+def add_class(name, begin, end, days_of_week, total, img_path, app_path, creator, interval=5):
+    class_info = ClassInfo(name, begin, end, days_of_week, total, creator, interval=interval)
     db.session.add(class_info)
     db.session.flush()
     db.session.commit()
     today = datetime.today()
     if today.weekday() in json.loads(class_info.days_of_week):
         args = [img_path, app_path]
-        if refresh_msg:
-            args = [args] + [refresh_msg]
         begin = map(int, begin.split(":"))
         end = map(int, end.split(":"))
         start = today.replace(hour=begin[0], minute=(begin[1] + 59) % 60)
@@ -53,7 +58,7 @@ def add_class(name, begin, end, days_of_week, total, img_path, app_path, creator
     return class_info
 
 
-def update_class(class_id, name, begin, end, days_of_week, total, img_path, app_path, interval, refresh_msg=None):
+def update_class(class_id, name, begin, end, days_of_week, total, img_path, app_path, interval):
     class_info = ClassInfo.query.get(class_id)
     class_info.name = name
     class_info.begin = begin
@@ -65,8 +70,6 @@ def update_class(class_id, name, begin, end, days_of_week, total, img_path, app_
     today = datetime.today()
     if today.weekday() in json.loads(class_info.days_of_week):
         args = [img_path, app_path]
-        if refresh_msg:
-            args = [args] + [refresh_msg]
         begin = map(int, begin.split(":"))
         end = map(int, end.split(":"))
         start = today.replace(hour=begin[0], minute=(begin[1] + 59) % 60)
@@ -80,7 +83,11 @@ def update_class(class_id, name, begin, end, days_of_week, total, img_path, app_
 def delete_class(class_id):
     ClassInfo.query.filter_by(class_id=class_id).delete()
     CountInfo.query.filter_by(class_id=class_id).delete()
+    Message.query.filter_by(class_id=class_id).delete()
     db.session.commit()
+    today = datetime.today()
+    job_id = '%d-%d' % (class_id, int(time.mktime(date(today.year, today.month, today.day).timetuple())))
+    scheduler.get_job(job_id).remove()
 
 
 def query_class(name=None, days_of_week=None, creator=None, page=1, per_page=PER_PAGE):
@@ -153,8 +160,6 @@ def snapshot_job(args):
         db.app = scheduler.app
         db.init_app(scheduler.app)
     snapshot(args[0], args[1], args[2])
-    if len(args) == 4:
-        args[3]()
 
 
 def add_daily_job(args):
@@ -169,15 +174,71 @@ def add_daily_job(args):
         fin = today.replace(hour=end[0], minute=(end[1] + 59) % 60)
         snap_args = [item.class_id] + args
         job_id = '%d-%d' % (item.class_id, int(time.mktime(date(today.year, today.month, today.day).timetuple())))
-        add_job(snapshot_job, snap_args, job_id, start, fin, item.interval)
+        if scheduler.get_job(job_id) is not None:
+            add_job(snapshot_job, snap_args, job_id, start, fin, item.interval)
 
 
 def add_job(job, args, job_id, start_date=None, end_date=None, interval=5):
     if end_date < datetime.now():
         scheduler.app.logger.info("end")
         return
-    if scheduler.get_job(job_id):
-        return
-    scheduler.add_job(job, 'interval', args=[args], id=job_id, minutes=interval, start_date=start_date,
-                      end_date=end_date, coalesce=False, misfire_grace_time=1)
-    # scheduler.add_job(job, 'date', args=[args], run_date=datetime(2016, 12, 14, 17, 28, 30))
+    _job_ = scheduler.get_job(job_id)
+    if _job_:
+        _job_.modify(minutes=interval, start_date=start_date, end_date=end_date)
+    else:
+        scheduler.add_job(job, 'interval', args=[args], id=job_id, minutes=interval, start_date=start_date,
+                          end_date=end_date, coalesce=False, misfire_grace_time=1)
+        # scheduler.add_job(job, 'date', args=[args], run_date=datetime(2016, 12, 14, 17, 28, 30))
+
+
+def add_msg(user, msg_type, extra, class_id):
+    msg = Message(msg_type, extra, user, class_id)
+    db.session.add(msg)
+    db.session.flush()
+    db.session.commit()
+
+
+def get_msgs(user):
+    msgs = Message.query.filter_by(msg_to=user).all()
+    return msgs
+
+
+def read_msgs(user):
+    msgs = get_msgs(user)
+    clear_msg(user)
+    return msgs
+
+
+def clear_msg(user):
+    Message.query.filter_by(msg_to=user).delete()
+    db.session.commit()
+
+
+def broadcast(class_info, count_info):
+    kwargs = {'event': SNAPSHOT, 'data': SNAPSHOT_NEW, 'msg': 'new snapshot comes', 'namespace': REFRESH_NOTIFICATION}
+    # kwargs = {'event': SNAPSHOT, 'data': SNAPSHOT_NEW, 'msg': 'new snapshot comes',
+    # 'room': 'class %d' % class_info.class_id, 'namespace' ; REFRESH_NOTIFICATION}
+    eventlet.spawn(notify, **kwargs)
+    kwargs.clear()
+    count = count_info.count
+    warning = class_info.total * class_info.warning
+    if warning > count * 100:
+        warn_msg = "%d < %d x %d%%" % (count, class_info.total, class_info.warning)
+        add_msg(class_info.creator, WARN_LEVEL, warn_msg, count_info.class_id)
+        # kwargs = {'msg': warn_msg, 'room': 'user %d' % class_info.creator}
+        kwargs = {'msg': warn_msg}
+        eventlet.spawn(notify, **kwargs)
+
+
+def notify(data=WARN_LEVEL, msg=None, event=WARN_EVENT, namespace=DEFAULT_NOTIFICATION, room=None):
+    with app.app_context():
+        content = {'msg': msg, 'data': data}
+        if room:
+            emit(event, content, namespace=namespace, room=room, callback=finish)
+        else:
+            emit(event, content, namespace=namespace, broadcast=True, callback=finish)
+
+
+def finish():
+    app.logger.info('notify success')
+    pass

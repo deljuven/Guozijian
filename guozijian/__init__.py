@@ -3,7 +3,7 @@ import os
 from datetime import datetime
 
 from flask_bootstrap import Bootstrap
-from flask_user import LoginManager
+from login import login_manager
 from sqlalchemy.exc import IntegrityError
 
 from database import db
@@ -14,7 +14,6 @@ from app import app, APP_PATH, APP_IMG_SAV_PATH
 bootstrap = Bootstrap(app)
 
 app.secret_key = 's3cr3t'
-login_manager = LoginManager()
 login_manager.init_app(app)
 
 db.init_app(app)
@@ -43,5 +42,9 @@ if not app.debug or os.environ.get('WERKZEUG_RUN_MAIN') == 'true':
     init_scheduler(app)
     add_daily_scheduler(add_daily_job, APP_IMG_SAV_PATH, APP_PATH)
     add_daily_job([APP_IMG_SAV_PATH, APP_PATH])
+    scheduler.start()
+else:
+    init_scheduler(app)
+    # add_test_scheduler()
     scheduler.start()
 

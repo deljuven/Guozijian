@@ -8,7 +8,7 @@ function snapshot(class_id) {
     $.get("snapshot", {'class': class_id}, function (data) {
         if (data.err)
             bootstrap_alert.warning(data.err)
-        location.reload();
+        // location.reload();
     });
 }
 
@@ -70,5 +70,6 @@ $(document).ready(function () {
         $("#gallery").height(max_height);
     });
 
-    onMessage("/msg_refresh", refreshTable);
+    var args = statistic_param({})
+    onMessage("/refresh_snaps", args['class'], "SNAPSHOT", refreshTable);
 });

@@ -1,23 +1,19 @@
-function onMessage(url, on_success, on_close, on_err) {
-    var source = new EventSource(url);
-    if (on_close)
-        source.addEventListener('server_closed', on_close);
-    else
-        source.addEventListener('server_closed', function (e) {
-            source.close();
-        });
-    if (on_err)
-        source.addEventListener('error', on_err);
-    else
-        source.addEventListener('error', function (e) {
-            source.close();
-        });
-    if (on_success) {
-        source.addEventListener('message', function (e) {
-            console.info("success: " + e.data);
+function onMessage(url, args, event, on_success) {
+    // var socket = io.connect(url);
+    var socket = io(url);
+    socket.connect(url);
+    socket.on('connect', function () {
+        console.info('connect');
+        if (args){
+            socket.emit('join', args);
+        }
+    });
+    socket.on(event, function (data, fun) {
+        if (on_success)
             on_success();
-        });
-    } else {
-        console.info("failed");
-    }
+        fun();
+    });
+    socket.on('disconnect', function () {
+        console.info('disconnect');
+    });
 }

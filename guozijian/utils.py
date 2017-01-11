@@ -19,3 +19,10 @@ ENCODING = locale.getpreferredencoding()
 config = configparser.ConfigParser()
 config.read_file(open('config.cfg'))
 RETRY = config['DEFAULT']['RetryNumber']
+
+WARN_LEVEL = 1
+SNAPSHOT_NEW = 2
+WARN_EVENT = 'WARN'
+DEFAULT_NOTIFICATION = '/notifications'
+REFRESH_NOTIFICATION = '/refresh_snaps'
+SNAPSHOT = 'SNAPSHOT'
