@@ -13,7 +13,8 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 # app.debug = True;
 # app.use_reloader = True;
 
-socketio = SocketIO(app, logger=True)
+# socketio = SocketIO(app, logger=True, engineio_logger=True)
+socketio = SocketIO(app)
 
 APP_IMG_SAV_PATH = os.path.join(app.root_path, 'static', 'data', 'img')
 APP_PATH = app.root_path

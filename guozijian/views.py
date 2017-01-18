@@ -2,7 +2,7 @@
 from flask import render_template, redirect, url_for, request, jsonify
 from flask_login import login_required, current_user
 from flask_moment import Moment
-from flask_socketio import emit, join_room
+from flask_socketio import emit, join_room, leave_room
 
 from app import app, APP_IMG_SAV_PATH, APP_PATH, socketio
 from login import signin, signout, signup, login_manager
@@ -202,13 +202,15 @@ def messages():
 
 @socketio.on('connect', namespace=DEFAULT_NOTIFICATION)
 def notification_connect():
-    if current_user.is_authenticated:
-        emit('test', {'data': 'Connected'}, namespace=DEFAULT_NOTIFICATION)
-        # room = json['user']
-        # join_room(room)
-        # emit('connect', {'data': 'Connected %d' % room}, namespace=DEFAULT_NOTIFICATION)
-    else:
-        return False
+    return True
+    # emit('connect', {'data': 'Connected'}, namespace=DEFAULT_NOTIFICATION)
+    # if current_user.is_authenticated:
+    # emit('connect', {'data': 'Connected'}, namespace=DEFAULT_NOTIFICATION)
+    # room = json['user']
+    # join_room(room)
+    # emit('connect', {'data': 'Connected %d' % room}, namespace=DEFAULT_NOTIFICATION)
+    # else:
+    #     return False
 
 
 @socketio.on('disconnect', namespace=DEFAULT_NOTIFICATION)
@@ -230,7 +232,13 @@ def snapshot_connect():
 @socketio.on('join', namespace=REFRESH_NOTIFICATION)
 def snapshot_join(room):
     join_room(room)
-    emit('connect', {'data': 'Join room %d' % room}, namespace=REFRESH_NOTIFICATION)
+    emit('join', {'data': 'Join room %d' % room}, namespace=REFRESH_NOTIFICATION)
+
+
+@socketio.on('leave', namespace=REFRESH_NOTIFICATION)
+def snapshot_leave(room):
+    leave_room(room)
+    emit('leave', {'data': 'Leave room %d' % room}, namespace=REFRESH_NOTIFICATION)
 
 
 @socketio.on('disconnect', namespace=REFRESH_NOTIFICATION)
@@ -242,8 +250,3 @@ def snapshot_disconnect():
 def warning(json):
     msgs = read_msgs(json.user_id)
     emit('warning', {'data': [msg.serialize for msg in msgs]}, namespace=DEFAULT_NOTIFICATION)
-
-
-@app.route('/test')
-def test():
-    emit('test', {'data': 'Connected'}, namespace=DEFAULT_NOTIFICATION)
