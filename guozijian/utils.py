@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import calendar
 import locale
+import os
 
 import configparser
 
@@ -9,7 +10,10 @@ SQLITE_URI = 'sqlite:///db/guozijian.db'
 SCHEDULER_DB = 'sqlite:///guozijian/db/scheduler.db'
 PER_PAGE = 10
 
-locale.setlocale(locale.LC_ALL, "chinese")
+if os.name is 'nt':
+    locale.setlocale(locale.LC_ALL, "chinese")
+else:
+    locale.setlocale(locale.LC_ALL, "zh_CN.utf8")
 __cal__ = calendar.Calendar(firstweekday=calendar.MONDAY)
 __days__ = __cal__.iterweekdays()
 WEEKDAYS = [(day, calendar.day_name[day].decode(locale.getpreferredencoding())) for day in __days__]
