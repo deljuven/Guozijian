@@ -17,7 +17,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
-    NSURL *url = [NSURL URLWithString:@"http://192.168.1.9:5000"];
+    NSURL *url = [NSURL URLWithString:@"http://202.120.40.20:5000"];
     [self.wenView loadRequest:[NSURLRequest requestWithURL:url]];
 }
 
