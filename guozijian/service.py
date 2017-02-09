@@ -13,7 +13,7 @@ from face.ImageDetector import ImageDetector
 from models import CountInfo, ClassInfo, Message
 from scheduler import scheduler
 from utils import PER_PAGE, RETRY, WARN_LEVEL, WARN_EVENT, DEFAULT_NOTIFICATION, SNAPSHOT, SNAPSHOT_NEW, \
-    REFRESH_NOTIFICATION
+    REFRESH_NOTIFICATION, INTERVAL
 from video.VideoService import VideoService, VideoException
 
 
@@ -186,9 +186,13 @@ def add_job(job, args, job_id, start_date=None, end_date=None, interval=5):
     if _job_:
         _job_.modify(minutes=interval, start_date=start_date, end_date=end_date)
     else:
-        scheduler.add_job(job, 'interval', args=[args], id=job_id, minutes=interval, start_date=start_date,
-                          end_date=end_date, coalesce=False, misfire_grace_time=1)
-        # scheduler.add_job(job, 'date', args=[args], run_date=datetime(2016, 12, 14, 17, 28, 30))
+        if INTERVAL == 'm':
+            scheduler.add_job(job, 'interval', args=[args], id=job_id, minutes=interval, start_date=start_date,
+                              end_date=end_date, coalesce=False, misfire_grace_time=1)
+        elif INTERVAL == 's':
+            scheduler.add_job(job, 'interval', args=[args], id=job_id, seconds=interval, start_date=start_date,
+                              end_date=end_date, coalesce=False, misfire_grace_time=1)
+            # scheduler.add_job(job, 'date', args=[args], run_date=datetime(2016, 12, 14, 17, 28, 30))
 
 
 def add_msg(user, msg_type, extra, class_id):

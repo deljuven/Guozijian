@@ -23,6 +23,7 @@ ENCODING = locale.getpreferredencoding()
 config = configparser.ConfigParser()
 config.read_file(open('config.cfg'))
 RETRY = config['DEFAULT']['RetryNumber']
+INTERVAL = config['DEFAULT']['TimeInterval']
 
 WARN_LEVEL = 1
 SNAPSHOT_NEW = 2

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import configparser
 
 class Test:
     def __init__(self, name, value, warning=50, interval=5):
@@ -41,6 +42,13 @@ if __name__ == '__main__':
     # print Test(1, 2, 3)
     # print MSG_TYPE[WARN_LEVEL]
     # print "%d < %d x %d%%" % (10, 20, 50)
-    args = [11, 22, 33]
-    kwargs = {'a': -1, 'b': -2, 'c': -3}
-    test(**kwargs)
+    # args = [11, 22, 33]
+    # kwargs = {'a': -1, 'b': -2, 'c': -3}
+    # test(**kwargs)
+    config = configparser.ConfigParser()
+    config.read_file(open('../config.cfg'))
+    RETRY = config['DEFAULT']['RetryNumber']
+    INTERVAL = config['DEFAULT']['TimeInterval']
+    print RETRY
+    print INTERVAL
+    print INTERVAL == 'm'
