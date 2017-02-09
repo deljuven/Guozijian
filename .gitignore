@@ -10,3 +10,5 @@ venv/
 */db
 */*.db
 */static/data/img
+*.log
+docs/
