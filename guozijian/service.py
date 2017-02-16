@@ -159,6 +159,8 @@ def snapshot_job(args):
     if not db.app and not db.engine:
         db.app = scheduler.app
         db.init_app(scheduler.app)
+    with app.app_context():
+        app.logger.debug("snap job run for %s" % time.asctime(datetime.now().timetuple()))
     snapshot(args[0], args[1], args[2])
 
 
