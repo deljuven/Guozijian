@@ -146,8 +146,11 @@ def statistic():
     if class_id is None:
         return redirect(url_for('class_list'))
     count = CountInfo.query.filter_by(class_id=class_id).order_by(CountInfo.count_id.desc()).first()
-    total = ClassInfo.query.get(class_id).total
-    return render_template("statistic.html", count=count, class_id=class_id, total=total)
+    class__ = ClassInfo.query.get(class_id)
+    if class__:
+        total = class__.total
+        return render_template("statistic.html", count=count, class_id=class_id, total=total)
+    return redirect(url_for('class_list'))
 
 
 @app.route('/counts')
