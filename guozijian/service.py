@@ -26,7 +26,7 @@ def snapshot(class_id, img_path, app_path):
     detector = ImageDetector(url, img_path)
     faces = detector.detect(4)
     count = save_to_db(detector, faces, class_id, app_path)
-    class_info = ClassInfo.query().get(class_id)
+    class_info = ClassInfo.query.get(class_id)
     broadcast(class_info, count)
 
 
@@ -52,7 +52,7 @@ def add_class(name, begin, end, days_of_week, total, img_path, app_path, creator
         end = map(int, end.split(":"))
         start = today.replace(hour=begin[0], minute=begin[1] % 60)
         fin = today.replace(hour=end[0], minute=end[1] % 60)
-        args = [class_info.class_id] + [args]
+        args = [class_info.class_id] + args
         job_id = '%d-%d' % (class_info.class_id, int(time.mktime(date(today.year, today.month, today.day).timetuple())))
         add_job(snapshot_job, args, job_id, start, fin, interval)
     return class_info
@@ -74,7 +74,7 @@ def update_class(class_id, name, begin, end, days_of_week, total, img_path, app_
         end = map(int, end.split(":"))
         start = today.replace(hour=begin[0], minute=(begin[1] + 59) % 60)
         fin = today.replace(hour=end[0], minute=(end[1] + 59) % 60)
-        args = [class_info.class_id] + [args]
+        args = [class_info.class_id] + args
         job_id = '%d-%d' % (class_info.class_id, int(time.mktime(date(today.year, today.month, today.day).timetuple())))
         add_job(snapshot_job, args, job_id, start, fin, interval)
     return class_info
@@ -184,6 +184,8 @@ def add_job(job, args, job_id, start_date=None, end_date=None, interval=5):
     if end_date < datetime.now():
         scheduler.app.logger.info("end")
         return
+    scheduler.app.logger.debug("add job %s" % job_id)
+    scheduler.app.logger.debug("args length %d" % len(args))
     _job_ = scheduler.get_job(job_id)
     if _job_:
         _job_.modify(minutes=interval, start_date=start_date, end_date=end_date)
