@@ -50,8 +50,8 @@ def add_class(name, begin, end, days_of_week, total, img_path, app_path, creator
         args = [img_path, app_path]
         begin = map(int, begin.split(":"))
         end = map(int, end.split(":"))
-        start = today.replace(hour=begin[0], minute=(begin[1] + 59) % 60)
-        fin = today.replace(hour=end[0], minute=(end[1] + 59) % 60)
+        start = today.replace(hour=begin[0], minute=begin[1] % 60)
+        fin = today.replace(hour=end[0], minute=end[1] % 60)
         args = [class_info.class_id] + [args]
         job_id = '%d-%d' % (class_info.class_id, int(time.mktime(date(today.year, today.month, today.day).timetuple())))
         add_job(snapshot_job, args, job_id, start, fin, interval)
