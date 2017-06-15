@@ -6,7 +6,7 @@ bootstrap_alert.warning = function (message) {
 
 function snapshot(class_id) {
     $.get("snapshot", {'class': class_id}, function (data) {
-        if (data.err)
+        if (data && data.err)
             bootstrap_alert.warning(data.err)
         // location.reload();
     });

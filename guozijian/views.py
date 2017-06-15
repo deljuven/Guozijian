@@ -7,7 +7,7 @@ from flask_socketio import emit, join_room, leave_room
 from app import app, APP_IMG_SAV_PATH, APP_PATH, socketio
 from login import signin, signout, signup, login_manager
 from models import User, LoginForm, RegistrationForm, CountInfo, ClassInfo, ClassForm
-from service import delete_class, add_class, update_class, query_counts, query_class, read_msgs
+from service import delete_class, add_class, update_class, query_counts, query_class, read_msgs, snapshot
 from utils import PER_PAGE, DEFAULT_NOTIFICATION, REFRESH_NOTIFICATION
 
 # import eventlet
@@ -173,8 +173,8 @@ def counts():
 @login_required
 def on_snapshot():
     class_id = request.args.get('class', type=int)
-    # faces = snapshot(class_id, APP_IMG_SAV_PATH, APP_PATH)
-    faces = 1
+    faces = snapshot(class_id, APP_IMG_SAV_PATH, APP_PATH)
+    # faces = 1
     total = ClassInfo.query.get(class_id).total
     if faces < total - 1:
         app.logger.info('snap test')

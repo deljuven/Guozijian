@@ -231,7 +231,8 @@ def broadcast(class_info, count_info):
     count = count_info.count
     warning = class_info.total * class_info.warning
     if warning > count * 100:
-        warn_msg = "课程 %s 中 参与人数 %d 少于目标人数 %d x %d%%" % (class_info.name, count, class_info.total, class_info.warning)
+        warn_msg = u"课程 %s 中 参与人数 %d 少于目标人数 %d x %d%%" % (
+            class_info.name.encode(), count, class_info.total, class_info.warning)
         add_msg(class_info.creator, WARN_LEVEL, warn_msg, count_info.class_id)
         # kwargs = {'msg': warn_msg, 'room': 'user %d' % class_info.creator}
         kwargs = {'msg': warn_msg}
