@@ -1,15 +1,12 @@
 # -*- coding: utf-8 -*-
-import os
 from datetime import datetime
 
 from flask_bootstrap import Bootstrap
-from login import login_manager
 from sqlalchemy.exc import IntegrityError
 
-from database import db
-from scheduler import init_scheduler, scheduler, add_daily_scheduler
-from service import add_daily_job
 from app import app, APP_PATH, APP_IMG_SAV_PATH
+from database import db
+from login import login_manager
 
 bootstrap = Bootstrap(app)
 
@@ -17,7 +14,7 @@ app.secret_key = 's3cr3t'
 login_manager.init_app(app)
 
 db.init_app(app)
-import guozijian.models
+import finder.models
 
 with app.app_context():
     try:
@@ -32,19 +29,4 @@ with app.app_context():
     except IntegrityError as ex:
         app.logger.info(ex.message)
 
-import guozijian.views
-
-# from flask_scheduler import Config, scheduler
-# app.config.from_object(Config())
-# scheduler.init_app(app)
-# scheduler.start()
-if not app.debug or os.environ.get('WERKZEUG_RUN_MAIN') == 'true':
-    init_scheduler(app)
-    add_daily_scheduler(add_daily_job, APP_IMG_SAV_PATH, APP_PATH)
-    add_daily_job([APP_IMG_SAV_PATH, APP_PATH])
-    scheduler.start()
-else:
-    init_scheduler(app)
-    # add_test_scheduler()
-    scheduler.start()
-
+import finder.views

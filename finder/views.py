@@ -7,7 +7,7 @@ from flask_socketio import emit, join_room, leave_room
 from app import app, APP_IMG_SAV_PATH, APP_PATH, socketio
 from login import signin, signout, signup, login_manager
 from models import User, LoginForm, RegistrationForm, CountInfo, ClassInfo, ClassForm
-from service import delete_class, add_class, update_class, query_counts, query_class, read_msgs, snapshot
+from service import delete_class, add_class, update_class, query_counts, query_class, snapshot
 from utils import PER_PAGE, DEFAULT_NOTIFICATION, REFRESH_NOTIFICATION
 
 # import eventlet
@@ -196,60 +196,3 @@ def page_not_found(e):
 @login_manager.unauthorized_handler
 def unauthorized_callback():
     return redirect('/login?next=' + request.path)
-
-
-@app.route("/msg")
-def messages():
-    return jsonify({'msgs': read_msgs(current_user.user_id)})
-
-
-@socketio.on('connect', namespace=DEFAULT_NOTIFICATION)
-def notification_connect():
-    return True
-    # emit('connect', {'data': 'Connected'}, namespace=DEFAULT_NOTIFICATION)
-    # if current_user.is_authenticated:
-    # emit('connect', {'data': 'Connected'}, namespace=DEFAULT_NOTIFICATION)
-    # room = json['user']
-    # join_room(room)
-    # emit('connect', {'data': 'Connected %d' % room}, namespace=DEFAULT_NOTIFICATION)
-    # else:
-    #     return False
-
-
-@socketio.on('disconnect', namespace=DEFAULT_NOTIFICATION)
-def notification_disconnect():
-    # room = json['user']
-    # leave_room(room)
-    print 'Disconnected %d' % 123
-    # emit('disconnect', {'data': 'Disconnected %d' % room}, namespace=DEFAULT_NOTIFICATION)
-
-
-@socketio.on('connect', namespace=REFRESH_NOTIFICATION)
-def snapshot_connect():
-    if current_user.is_authenticated:
-        emit('connect', {'data': 'Connected'}, namespace=REFRESH_NOTIFICATION)
-    else:
-        return False
-
-
-@socketio.on('join', namespace=REFRESH_NOTIFICATION)
-def snapshot_join(room):
-    join_room(room)
-    emit('join', {'data': 'Join room %d' % room}, namespace=REFRESH_NOTIFICATION)
-
-
-@socketio.on('leave', namespace=REFRESH_NOTIFICATION)
-def snapshot_leave(room):
-    leave_room(room)
-    emit('leave', {'data': 'Leave room %d' % room}, namespace=REFRESH_NOTIFICATION)
-
-
-@socketio.on('disconnect', namespace=REFRESH_NOTIFICATION)
-def snapshot_disconnect():
-    print 'Disconnected %d' % 123
-
-
-@socketio.on('warning', namespace=DEFAULT_NOTIFICATION)
-def warning(json):
-    msgs = read_msgs(json.user_id)
-    emit('warning', {'data': [msg.serialize for msg in msgs]}, namespace=DEFAULT_NOTIFICATION)

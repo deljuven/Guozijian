@@ -1,2 +1,2 @@
-# Guozijian
-This is a simple project for fun
+# Finder
+This is another simple project for fun
