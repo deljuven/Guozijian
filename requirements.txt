@@ -1,5 +1,7 @@
+appdirs==1.4.3
 APScheduler==3.3.0
 autoenv==1.0.0
+backports.functools-lru-cache==1.4
 bcrypt==3.1.1
 billiard==3.5.0.2
 blinker==1.4
@@ -7,6 +9,7 @@ cffi==1.9.1
 click==6.6
 colorama==0.3.7
 configparser==3.5.0
+cycler==0.10.0
 decorator==4.0.10
 dominate==2.3.0
 enum-compat==0.0.2
@@ -36,7 +39,12 @@ inflection==0.3.1
 itsdangerous==0.24
 Jinja2==2.8
 MarkupSafe==0.23
+matplotlib==2.1.1
+numpy==1.13.3
 oauth2==1.9.0.post1
+opencv-contrib-python==3.3.1.11
+opencv-python==3.3.1.11
+packaging==16.8
 passlib==1.7.0
 pathlib2==2.1.0
 pbr==1.10.0
@@ -45,6 +53,7 @@ psutil==5.0.0
 pycparser==2.17
 pycryptodome==3.4.3
 PyMySQL==0.7.9
+pyparsing==2.2.0
 python-dateutil==2.6.0
 python-engineio==1.1.0
 python-socketio==1.6.2

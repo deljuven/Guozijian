@@ -12,3 +12,5 @@ venv/
 */static/data/img
 *.log
 docs/
+imgs/
+videos/
