@@ -12,7 +12,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 {% endblock %}
 
-{% block title %}国子监{% endblock %}
+{% block title %}人人搜{% endblock %}
 
 {% block styles %}
 {{ super() }}
@@ -32,7 +32,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="index">国子监</a>
+            <a class="navbar-brand" href="index">人人搜</a>
         </div>
         <!-- /.navbar-header -->
 
@@ -69,7 +69,7 @@
                 <ul class="nav" id="side-menu">
                     <li class="sidebar-search">
                         <div class="input-group custom-search-form">
-                            <input type="text" class="form-control" placeholder="Search...">
+                            <input type="text" class="form-control" placeholder="检索">
                             <span class="input-group-btn">
                                     <button class="btn btn-default" type="button">
                                         <i class="fa fa-search"></i>
@@ -79,9 +79,9 @@
                         <!-- /input-group -->
                     </li>
                     <li>
-                        {% block statistic %}
-                        <a href="{{url_for('index')}}"><i class="fa fa-dashboard fa-fw"></i>统计信息</a>
-                        {% endblock statistic %}
+                        {% block search %}
+                            <a href="{{url_for('search')}}"><i class="fa fa-dashboard fa-fw"></i>人员搜索</a>
+                        {% endblock search %}
                     </li>
                     <li>
                         <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i>待定<span class="fa arrow"></span></a>

@@ -11,7 +11,7 @@ if __name__ == '__main__':
     # Instead of MIL, you can also use
 
     tracker_types = ['BOOSTING', 'MIL', 'KCF', 'TLD', 'MEDIANFLOW', 'GOTURN']
-    index = 5
+    index = 4
     tracker_type = tracker_types[index]
 
     if int(minor_ver) < 3:

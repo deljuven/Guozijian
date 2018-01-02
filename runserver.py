@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from flask_script import Manager
 
-from finder.app import app, socketio
+from finder.app import app
 
 manager = Manager(app)
 

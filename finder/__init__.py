@@ -20,10 +20,8 @@ with app.app_context():
     try:
         db.create_all()
         date = datetime.strptime('2016-12-05 05:45:06', "%Y-%m-%d %H:%M:%S")
-        init_count = models.CountInfo('803442272850210816.jpg', 'static\\data\\img\\803442272850210816.jpg', date, 8)
         user = models.User("test", "test", "test")
         db.session.add(user)
-        db.session.add(init_count)
         db.session.flush()
         db.session.commit()
     except IntegrityError as ex:

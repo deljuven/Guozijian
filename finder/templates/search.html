@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% from "utils.html" import flash_message %}
 
-{% block title %}人人搜-首页{% endblock %}
+{% block title %}人人搜-确认待搜索人员{% endblock %}
 
 {% block styles %}
 {{ super() }}
@@ -11,17 +11,20 @@
 
 {% block page_content %}
 <div class="row row-eq-height">
-    <div class="col-lg-10 col-md-10 col-xs-12">
-        <h1 class="page-header">首页-控制面板</h1>
+    <div class="col-lg-10 col-md-10 col-xs-10">
+        <h1 class="page-header">文件上传</h1>
     </div>
     <!-- /.col-lg-12 -->
 </div>
+<div id = "alert_placeholder"></div>
 <div class="row">
     <form method=post enctype=multipart/form-data>
         <input type=file name="photo">
         <input type=submit value="上传">
     </form>
 </div>
+<!-- /.row -->
+<!-- /.row -->
 {% endblock %}
 
 {% block scripts %}

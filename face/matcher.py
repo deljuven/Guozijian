@@ -3,15 +3,11 @@ import cv2
 import numpy as np
 from matplotlib import pyplot as plt
 
-# # Initiate SIFT detector
-# sift = cv2.xfeatures2d.SIFT_create()
-
 MIN_MATCH_COUNT = 10
 
 FLANN_INDEX_KDTREE = 0
 
 
-# Initiate SURF detector
 class SurfMatcher:
 
     def __init__(self):
@@ -63,7 +59,7 @@ class SurfMatcher:
 
 if __name__ == '__main__':
     origin = cv2.imread('../imgs/1.jpg', 0)  # queryImage
-    target = cv2.imread('../imgs/face3.jpg', 0)  # trainImage
+    target = cv2.imread('../imgs/face4.jpg', 0)  # trainImage
     surf = SurfMatcher()
     kp1, des1 = surf.get_keypoints(origin)
     kp2, des2 = surf.get_keypoints(target)
@@ -77,6 +73,5 @@ if __name__ == '__main__':
     target, draw_params = surf.get_draw_params(good, kp1, kp2, origin, target)
     result = cv2.drawMatches(origin, kp1, target, kp2, good, None, **draw_params)
 
-    # plt.imshow(img3, 'gray'), plt.show()
     plt.imshow(result)
     plt.show()
