@@ -4,13 +4,12 @@ from datetime import datetime
 from flask_bootstrap import Bootstrap
 from sqlalchemy.exc import IntegrityError
 
-from app import app, APP_PATH, APP_IMG_SAV_PATH
+from app import app, APP_PATH, APP_IMG_SAV_PATH, photos
 from database import db
 from login import login_manager
 
 bootstrap = Bootstrap(app)
 
-app.secret_key = 's3cr3t'
 login_manager.init_app(app)
 
 db.init_app(app)

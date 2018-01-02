@@ -16,11 +16,8 @@
     </div>
     <!-- /.col-lg-12 -->
 </div>
-<div class="row">
-    <form method=post enctype=multipart/form-data>
-        <input type=file name="photo">
-        <input type=submit value="上传">
-    </form>
+<div class="row" align="center">
+    <img src="{{url_for('static', filename='img/floor-0.png')}}" class="zoomImage">
 </div>
 {% endblock %}
 

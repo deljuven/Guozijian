@@ -1,18 +1,15 @@
 # -*- coding: utf-8 -*-
-from flask import render_template, redirect, url_for, request
+import base64
+
+from flask import render_template, redirect, url_for, request, jsonify
 from flask_login import login_required
 from flask_moment import Moment
-from flask_uploads import UploadSet, configure_uploads, IMAGES, \
-    patch_request_class
 
-from app import app
+from app import app, APP_IMG_SAV_PATH
 from login import signin, signout, signup, login_manager
 from models import LoginForm, RegistrationForm, User
 
 moment = Moment(app)
-photos = UploadSet('photos', IMAGES + tuple("mp4"))
-configure_uploads(app, photos)
-patch_request_class(app)
 
 
 def redirect_url(default='index'):
@@ -65,11 +62,15 @@ def logout():
 @app.route('/search', methods=['GET', 'POST'])
 @login_required
 def search():
-    if request.method == 'POST' and 'photo' in request.files:
-        filename = photos.save(request.files['photo'], name="match.jpg")
-        file_url = photos.url(filename)
-        return redirect(url_for('search'))
-    return render_template("search.html")
+    if request.method == 'POST' and request.form.get("action") == "add":
+        data = request.form.get("picStr")
+        imgdata = base64.b64decode(data)
+        imgfile = APP_IMG_SAV_PATH + "/pattern.png"
+        file = open(imgfile, 'wb')
+        file.write(imgdata)
+        file.close()
+        return jsonify(imgfile=imgfile)
+    return render_template('search.html')
 
 
 @app.errorhandler(404)
