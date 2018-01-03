@@ -11,7 +11,7 @@ app.secret_key = 's3cr3t'
 app.config['SQLALCHEMY_DATABASE_URI'] = SQLITE_URI
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 # app.debug = True;
-# app.use_reloader = True;
+app.use_reloader = True;
 
 APP_PATH = app.root_path
 APP_IMG_SAV_PATH = os.path.join(APP_PATH, 'static', 'data', 'img')

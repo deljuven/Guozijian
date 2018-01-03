@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import cv2
 import numpy as np
+
 from matplotlib import pyplot as plt
 
 MIN_MATCH_COUNT = 10
@@ -11,15 +12,20 @@ FLANN_INDEX_KDTREE = 0
 class SurfMatcher:
 
     def __init__(self):
+        self.orb = cv2.ORB_create()
         self.surf = cv2.xfeatures2d.SURF_create()
 
     def get_keypoints(self, img):
+        # return self.orb.detectAndCompute(img, None)
         return self.surf.detectAndCompute(img, None)
 
     def get_flann_matcher(self):
         index_params = dict(algorithm=FLANN_INDEX_KDTREE, trees=5)
         search_params = dict(checks=50)
         return cv2.FlannBasedMatcher(index_params, search_params)
+
+    def get_bf_matcher(self):
+        return cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
 
     def get_draw_params(self, good, kp1, kp2, img1, img2):
         if len(good) > MIN_MATCH_COUNT:
@@ -40,9 +46,9 @@ class SurfMatcher:
         return img2, dict(matchColor=(0, 255, 0),  # draw matches in green color
                           singlePointColor=None,
                           matchesMask=matchesMask,  # draw only inliers
-                          flags=2)
+                          flags=2), dst, pts
 
-    def is_match(self, origin, target):
+    def matches(self, origin, target):
         kp1, des1 = self.get_keypoints(origin)
         kp2, des2 = self.get_keypoints(target)
         flann = self.get_flann_matcher()
@@ -53,13 +59,19 @@ class SurfMatcher:
             if m.distance < 0.7 * n.distance:
                 good.append(m)
         if len(good) > MIN_MATCH_COUNT:
-            return True
-        return False
+            return True, good
+        return False, good
 
 
 if __name__ == '__main__':
-    origin = cv2.imread('../imgs/1.jpg', 0)  # queryImage
-    target = cv2.imread('../imgs/face4.jpg', 0)  # trainImage
+    # target = cv2.imread('../imgs/face4.jpg', cv2.IMREAD_GRAYSCALE)  # trainImage
+    target_bgr = cv2.imread('../imgs/face5.jpg')  # trainImage
+    origin_bgr = cv2.imread('../imgs/1.jpg')  # queryImage
+    target = cv2.cvtColor(target_bgr, cv2.COLOR_BGR2GRAY)
+    origin = cv2.cvtColor(origin_bgr, cv2.COLOR_BGR2GRAY)
+    target_rgb = cv2.cvtColor(target_bgr, cv2.cv2.COLOR_BGR2RGB)
+    # plt.imshow(cv2.cvtColor(target_bgr, cv2.COLOR_BGR2RGB))
+    # plt.show()
     surf = SurfMatcher()
     kp1, des1 = surf.get_keypoints(origin)
     kp2, des2 = surf.get_keypoints(target)
@@ -70,8 +82,28 @@ if __name__ == '__main__':
     for m, n in matches:
         if m.distance < 0.7 * n.distance:
             good.append(m)
-    target, draw_params = surf.get_draw_params(good, kp1, kp2, origin, target)
+    target, draw_params, dst, pts = surf.get_draw_params(good, kp1, kp2, origin, target)
     result = cv2.drawMatches(origin, kp1, target, kp2, good, None, **draw_params)
+    _, x_bias, _ = origin_bgr.shape
+    point0 = (int(dst.item(0)), int(dst.item(1)))
+    point1 = (int(dst.item(2)), int(dst.item(3)))
+    point2 = (int(dst.item(4)), int(dst.item(5)))
+    point3 = (int(dst.item(6)), int(dst.item(7)))
+    print(dst)
+    print(pts)
+    print(point0)
 
-    plt.imshow(result)
+    # cv2.rectangle(target_rgb, (int(pts.item(0)), int(pts.item(1))), (int(pts.item(4)), int(pts.item(5))), (0, 255, 0), 3)
+    cv2.line(target_rgb, point0, point1, (0, 255, 0), 3)
+    cv2.line(target_rgb, point1, point2, (0, 255, 0), 3)
+    cv2.line(target_rgb, point2, point3, (0, 255, 0), 3)
+    cv2.line(target_rgb, point3, point0, (0, 255, 0), 3)
+    plt.imshow(target_rgb)
     plt.show()
+    pass
+    # bf = surf.get_bf_matcher()
+    # matches = bf.match(des1, des2)
+    # matches = sorted(matches, key=lambda x: x.distance)
+    # img3 = cv2.drawMatches(origin, kp1, target, kp2, matches[:10], None, flags=2)
+    # plt.imshow(img3)
+    # plt.show()

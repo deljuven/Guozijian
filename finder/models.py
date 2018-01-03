@@ -5,7 +5,6 @@ from flask_wtf import FlaskForm
 from flask_wtf.file import FileAllowed, FileRequired
 from wtforms import StringField, PasswordField, validators, BooleanField, FileField, SubmitField
 
-from app import photos
 from database import db
 
 
@@ -23,13 +22,6 @@ class RegistrationForm(FlaskForm):
     ])
     confirm = PasswordField(u'确认密码')
     accept_tos = BooleanField(u'我已经阅读服务条款并接受', [validators.DataRequired()])
-
-
-class UploadForm(FlaskForm):
-    photo = FileField(u'上传文件', validators=[
-        FileAllowed(photos, u'只能上传图片！'),
-        FileRequired(u'文件未选择！')])
-    submit = SubmitField(label=u'上传')
 
 
 class User(db.Model, UserMixin):

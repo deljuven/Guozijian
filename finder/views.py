@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 import base64
+import os
 
-from flask import render_template, redirect, url_for, request, jsonify
+from flask import render_template, redirect, url_for, request
 from flask_login import login_required
 from flask_moment import Moment
 
 from app import app, APP_IMG_SAV_PATH
+from face.matcher import SurfMatcher
 from login import signin, signout, signup, login_manager
 from models import LoginForm, RegistrationForm, User
 
@@ -59,18 +61,34 @@ def logout():
     return redirect(url_for('index'))
 
 
-@app.route('/search', methods=['GET', 'POST'])
+@app.route('/search', methods=['GET'])
 @login_required
 def search():
+    return render_template('search.html')
+
+
+@app.route('/upload', methods=['POST', 'OPTIONS'])
+@login_required
+def upload():
     if request.method == 'POST' and request.form.get("action") == "add":
         data = request.form.get("picStr")
         imgdata = base64.b64decode(data)
-        imgfile = APP_IMG_SAV_PATH + "/pattern.png"
+        imgfile = os.path.join(APP_IMG_SAV_PATH, 'pattern.png')
         file = open(imgfile, 'wb')
         file.write(imgdata)
         file.close()
-        return jsonify(imgfile=imgfile)
-    return render_template('search.html')
+        return redirect(url_for('status'))
+
+
+@app.route('/status', methods=['GET'])
+@login_required
+def status():
+    matcher = SurfMatcher()
+    flag, good = matcher.match()
+    if flag:
+        pass
+
+    return render_template("status.html")
 
 
 @app.errorhandler(404)

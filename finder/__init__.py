@@ -4,7 +4,7 @@ from datetime import datetime
 from flask_bootstrap import Bootstrap
 from sqlalchemy.exc import IntegrityError
 
-from app import app, APP_PATH, APP_IMG_SAV_PATH, photos
+from app import app, APP_PATH, APP_IMG_SAV_PATH
 from database import db
 from login import login_manager
 

@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% import "bootstrap/utils.html" as utils %}
+
+{% block title %}人人搜-搜索结果{% endblock %}
+
+{% block styles %}
+{{ super() }}
+<link rel="stylesheet" href="{{url_for('static', filename='css/guozijian.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='vendor/bootstrap-table/bootstrap-table.css')}}">
+{% endblock %}
+
+{% block page_content %}
+<div class="row row-eq-height">
+    <div class="col-lg-10 col-md-10 col-xs-12">
+        <h1 class="page-header"></h1>
+    </div>
+    <!-- /.col-lg-12 -->
+</div>
+<div class="row" align="center">
+    <img src="{{url_for('static', filename='img/floor-0.png')}}" class="zoomImage">
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+{% endblock scripts %}
