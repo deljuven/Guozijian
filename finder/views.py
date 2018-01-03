@@ -2,12 +2,11 @@
 import base64
 import os
 
-from flask import render_template, redirect, url_for, request
+from flask import render_template, redirect, url_for, request, jsonify
 from flask_login import login_required
 from flask_moment import Moment
 
 from app import app, APP_IMG_SAV_PATH
-from face.matcher import SurfMatcher
 from login import signin, signout, signup, login_manager
 from models import LoginForm, RegistrationForm, User
 
@@ -77,18 +76,17 @@ def upload():
         file = open(imgfile, 'wb')
         file.write(imgdata)
         file.close()
-        return redirect(url_for('status'))
+        return jsonify({'status': 'ok'})
 
 
 @app.route('/status', methods=['GET'])
 @login_required
 def status():
-    matcher = SurfMatcher()
-    flag, good = matcher.match()
-    if flag:
-        pass
-
-    return render_template("status.html")
+    # matcher = SurfMatcher()
+    # flag, good = matcher.matches()
+    # if flag:
+    #     pass
+    return render_template("status.html", index=2)
 
 
 @app.errorhandler(404)

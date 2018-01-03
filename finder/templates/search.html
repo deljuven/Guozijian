@@ -77,16 +77,15 @@
             <div class="btn-group">
                 <label class="btn btn-primary btn-upload" for="inputImage" title="选择搜索人员">
                     <input type="file" class="sr-only" id="inputImage" name="file"
-                           accept=".jpg,.jpeg,.png,.gif,.bmp,.tiff">
+                           accept=".jpg,.jpeg,.png,.gif,.bmp,.tiff"/>
                     <span class="docs-tooltip" data-toggle="tooltip" title="选择搜索人员">
-              <span class="fa fa-upload"></span>
-            </span>
+                        <span class="fa fa-upload"></span>
+                    </span>
                 </label>
-                <button type="button" class="btn btn-primary" id="upload" data-method="upload" title="上传图片">
-            <span class="docs-tooltip" data-toggle="tooltip" title="上传图片">
-              <span class="fa fa-check"></span>
-            </span>
-                </button>
+                <label class="btn btn-primary" id="upload" data-method="upload" title="上传图片">
+                    <span class="docs-tooltip" data-toggle="tooltip" title="上传图片">
+                        <span class="fa fa-check"></span>
+                    </span>
                 </label>
             </div>
         </div>
@@ -158,6 +157,11 @@
                 type: 'post',
                 data: data,
                 success: function (data) {
+                    console.log(data)
+                    if (data.status == 'ok') {
+                        window.location.replace("{{url_for('status')}}");
+                    }
+
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown) {
 

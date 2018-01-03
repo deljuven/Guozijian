@@ -45,10 +45,11 @@ if __name__ == '__main__':
     # args = [11, 22, 33]
     # kwargs = {'a': -1, 'b': -2, 'c': -3}
     # test(**kwargs)
-    config = configparser.ConfigParser()
-    config.read_file(open('../config.cfg'))
-    RETRY = config['DEFAULT']['RetryNumber']
-    INTERVAL = config['DEFAULT']['TimeInterval']
-    print RETRY
-    print INTERVAL
-    print INTERVAL == 'm'
+    # config = configparser.ConfigParser()
+    # config.read_file(open('../config.cfg'))
+    # RETRY = config['DEFAULT']['RetryNumber']
+    # INTERVAL = config['DEFAULT']['TimeInterval']
+    # print RETRY
+    # print INTERVAL
+    # print INTERVAL == 'm'
+    print("{:03d}".format(1))

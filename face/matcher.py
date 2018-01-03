@@ -37,11 +37,18 @@ class SurfMatcher:
 
             h, w = img1.shape
             pts = np.float32([[0, 0], [0, h - 1], [w - 1, h - 1], [w - 1, 0]]).reshape(-1, 1, 2)
-            dst = cv2.perspectiveTransform(pts, M)
-            img2 = cv2.polylines(img2, [np.int32(dst)], True, 255, 3, cv2.LINE_AA)
+            if M:
+                dst = cv2.perspectiveTransform(pts, M)
+                img2 = cv2.polylines(img2, [np.int32(dst)], True, 255, 3, cv2.LINE_AA)
+            else:
+                dst = None
+                img2 = None
+
         else:
             print "Not enough matches are found - %d/%d" % (len(good), MIN_MATCH_COUNT)
             matchesMask = None
+            dst = None
+            pts = None
 
         return img2, dict(matchColor=(0, 255, 0),  # draw matches in green color
                           singlePointColor=None,
@@ -65,16 +72,19 @@ class SurfMatcher:
 
 if __name__ == '__main__':
     # target = cv2.imread('../imgs/face4.jpg', cv2.IMREAD_GRAYSCALE)  # trainImage
-    target_bgr = cv2.imread('../imgs/face5.jpg')  # trainImage
-    origin_bgr = cv2.imread('../imgs/1.jpg')  # queryImage
+    # source, aim = '../imgs/1.jpg', '../imgs/face5.jpg'
+    source, aim = 'D:\\Projects\\web\\monitor\\finder\\static\\data\\img\\pattern.png', 'D:\\Projects\\img\\out2\\frames_018.png'
+    mx, index = 0, 0
+    origin_bgr = cv2.imread(source)  # queryImage
+    target_bgr = cv2.imread(aim)  # trainImage
     target = cv2.cvtColor(target_bgr, cv2.COLOR_BGR2GRAY)
     origin = cv2.cvtColor(origin_bgr, cv2.COLOR_BGR2GRAY)
     target_rgb = cv2.cvtColor(target_bgr, cv2.cv2.COLOR_BGR2RGB)
-    # plt.imshow(cv2.cvtColor(target_bgr, cv2.COLOR_BGR2RGB))
-    # plt.show()
     surf = SurfMatcher()
     kp1, des1 = surf.get_keypoints(origin)
     kp2, des2 = surf.get_keypoints(target)
+    print(len(kp1), len(kp2))
+
     flann = surf.get_flann_matcher()
     matches = flann.knnMatch(des1, des2, k=2)
     # store all the good matches as per Lowe's ratio test.
@@ -82,28 +92,29 @@ if __name__ == '__main__':
     for m, n in matches:
         if m.distance < 0.7 * n.distance:
             good.append(m)
+        # if len(good) > mx:
+        #     index = x
+        #     mx = len(good)
+    # print(index, mx)
+    print(len(good))
     target, draw_params, dst, pts = surf.get_draw_params(good, kp1, kp2, origin, target)
     result = cv2.drawMatches(origin, kp1, target, kp2, good, None, **draw_params)
-    _, x_bias, _ = origin_bgr.shape
-    point0 = (int(dst.item(0)), int(dst.item(1)))
-    point1 = (int(dst.item(2)), int(dst.item(3)))
-    point2 = (int(dst.item(4)), int(dst.item(5)))
-    point3 = (int(dst.item(6)), int(dst.item(7)))
-    print(dst)
-    print(pts)
-    print(point0)
+    if dst is not None:
+        _, x_bias, _ = origin_bgr.shape
+        point0 = (int(dst.item(0)), int(dst.item(1)))
+        point1 = (int(dst.item(2)), int(dst.item(3)))
+        point2 = (int(dst.item(4)), int(dst.item(5)))
+        point3 = (int(dst.item(6)), int(dst.item(7)))
 
-    # cv2.rectangle(target_rgb, (int(pts.item(0)), int(pts.item(1))), (int(pts.item(4)), int(pts.item(5))), (0, 255, 0), 3)
-    cv2.line(target_rgb, point0, point1, (0, 255, 0), 3)
-    cv2.line(target_rgb, point1, point2, (0, 255, 0), 3)
-    cv2.line(target_rgb, point2, point3, (0, 255, 0), 3)
-    cv2.line(target_rgb, point3, point0, (0, 255, 0), 3)
-    plt.imshow(target_rgb)
+        cv2.line(target_rgb, point0, point1, (0, 255, 0), 3)
+        cv2.line(target_rgb, point1, point2, (0, 255, 0), 3)
+        cv2.line(target_rgb, point2, point3, (0, 255, 0), 3)
+        cv2.line(target_rgb, point3, point0, (0, 255, 0), 3)
+        plt.figure(figsize=(19.2, 10.8), dpi=100)
+        plt.imshow(target_rgb)
+        plt.show()
+        plt.close()
+    plt.figure(figsize=(19.2, 10.8), dpi=100)
+    plt.imshow(result)
     plt.show()
-    pass
-    # bf = surf.get_bf_matcher()
-    # matches = bf.match(des1, des2)
-    # matches = sorted(matches, key=lambda x: x.distance)
-    # img3 = cv2.drawMatches(origin, kp1, target, kp2, matches[:10], None, flags=2)
-    # plt.imshow(img3)
-    # plt.show()
+    plt.close()
