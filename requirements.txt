@@ -28,6 +28,7 @@ Flask-Redis==0.3.0
 Flask-Script==2.0.5
 Flask-SocketIO==2.8.2
 Flask-SQLAlchemy==2.1
+Flask-Uploads==0.2.1
 Flask-User==0.6.9
 Flask-WTF==0.13.1
 funcsigs==1.0.2
