@@ -1,12 +1,13 @@
 {% extends "base.html" %}
 {% import "bootstrap/utils.html" as utils %}
 
-{% block title %}人人搜-查找结果{% endblock %}
+{% block title %}天网-查找结果{% endblock %}
 
 {% block styles %}
 {{ super() }}
 <link rel="stylesheet" href="{{url_for('static', filename='css/guozijian.css')}}">
 <link rel="stylesheet" href="{{url_for('static', filename='vendor/bootstrap-table/bootstrap-table.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='vendor/bootstrap-select/css/bootstrap-select.min.css')}}">
 {% endblock %}
 
 {% block page_content %}
@@ -19,8 +20,56 @@
 <div class="row" align="center">
     <img src="{{url_for('static', filename='img')}}/floor-{{index}}.png" class="zoomImage">
 </div>
+<div class="row" align="center">
+    <div class="col col-md-2">
+        <select class="selectpicker" id="selector" disabled>
+            {% if index == 1 %}
+            <option value="1" selected>监控1</option>
+            {% else %}
+            <option value="1">监控1</option>
+            {% endif %}
+            {% if index == 2 %}
+            <option value="2" selected>监控2</option>
+            {% else %}
+            <option value="2">监控2</option>
+            {% endif %}
+            {% if index == 3 %}
+            <option value="3" selected>监控3</option>
+            {% else %}
+            <option value="3">监控3</option>
+            {% endif %}
+            {% if index == 4 %}
+            <option value="4" selected>监控4</option>
+            {% else %}
+            <option value="4">监控4</option>
+            {% endif %}
+            {% if index == 5 %}
+            <option value="5" selected>监控5</option>
+            {% else %}
+            <option value="5">监控5</option>
+            {% endif %}
+        </select>
+    </div>
+    <div class="col col-md-10">
+        <img src="{{url_for('static', filename='img/match-0.png')}}" class="zoomImage" style="float: left">
+    </div>
+</div>
 {% endblock %}
 
 {% block scripts %}
 {{ super() }}
+<script type=text/javascript
+        src="{{url_for('static', filename='vendor/bootstrap-select/js/bootstrap-select.min.js')}}"></script>
+<!-- (Optional) Latest compiled and minified JavaScript translation files -->
+<script type=text/javascript
+        src="{{url_for('static', filename='vendor/bootstrap-select/js/i18n/defaults-zh_CN.min.js')}}"></script>
+<script type=text/javascript
+        src="{{url_for('static', filename='vendor/bootstrap-select/js/i18n/defaults-en_US.min.js')}}"></script>
+
+<script type="text/javascript">
+    window.onload = function () {
+        var selector = $('#selector');
+        selector.disable()
+    };
+</script>
 {% endblock scripts %}

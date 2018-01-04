@@ -37,7 +37,7 @@ class SurfMatcher:
 
             h, w = img1.shape
             pts = np.float32([[0, 0], [0, h - 1], [w - 1, h - 1], [w - 1, 0]]).reshape(-1, 1, 2)
-            if M:
+            if M is not None:
                 dst = cv2.perspectiveTransform(pts, M)
                 img2 = cv2.polylines(img2, [np.int32(dst)], True, 255, 3, cv2.LINE_AA)
             else:
@@ -73,7 +73,7 @@ class SurfMatcher:
 if __name__ == '__main__':
     # target = cv2.imread('../imgs/face4.jpg', cv2.IMREAD_GRAYSCALE)  # trainImage
     # source, aim = '../imgs/1.jpg', '../imgs/face5.jpg'
-    source, aim = 'D:\\Projects\\web\\monitor\\finder\\static\\data\\img\\pattern.png', 'D:\\Projects\\img\\out2\\frames_018.png'
+    source, aim = 'D:\\Projects\\web\\monitor\\finder\\static\\data\\img\\pattern.png', 'D:\\Projects\\web\\monitor\\finder\\static\\img\\match-0.png'
     mx, index = 0, 0
     origin_bgr = cv2.imread(source)  # queryImage
     target_bgr = cv2.imread(aim)  # trainImage
@@ -101,10 +101,15 @@ if __name__ == '__main__':
     result = cv2.drawMatches(origin, kp1, target, kp2, good, None, **draw_params)
     if dst is not None:
         _, x_bias, _ = origin_bgr.shape
-        point0 = (int(dst.item(0)), int(dst.item(1)))
-        point1 = (int(dst.item(2)), int(dst.item(3)))
-        point2 = (int(dst.item(4)), int(dst.item(5)))
-        point3 = (int(dst.item(6)), int(dst.item(7)))
+        point0 = (int(dst.item(0)), int(dst.item(1)-x_bias))
+        point1 = (int(dst.item(2)), int(dst.item(3)-x_bias))
+        point2 = (int(dst.item(4)), int(dst.item(5)-x_bias))
+        point3 = (int(dst.item(6)), int(dst.item(7)-x_bias))
+
+        # point0 = (240, 210)
+        # point1 = (309, 207)
+        # point3 = (250, 386)
+        # point2 = (322, 378)
 
         cv2.line(target_rgb, point0, point1, (0, 255, 0), 3)
         cv2.line(target_rgb, point1, point2, (0, 255, 0), 3)

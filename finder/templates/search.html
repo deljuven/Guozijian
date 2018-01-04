@@ -1,13 +1,14 @@
 {% extends "base.html" %}
 {% import "bootstrap/utils.html" as utils %}
 
-{% block title %}人人搜-人员搜索{% endblock %}
+{% block title %}天网-人员搜索{% endblock %}
 
 {% block styles %}
 {{ super() }}
 <link rel="stylesheet" href="{{url_for('static', filename='css/guozijian.css')}}">
 <link rel="stylesheet" href="{{url_for('static', filename='vendor/bootstrap-table/bootstrap-table.css')}}">
 <link rel="stylesheet" href="{{url_for('static', filename='vendor/cropperjs/cropper.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='vendor/bootstrap-select/css/bootstrap-select.min.css')}}">
 <style>
     img {
         max-width: 100%;
@@ -56,7 +57,7 @@
     }
 
     .preview-lg {
-        height: 9rem;
+        height: 10rem;
         width: 16rem;
     }
 </style>
@@ -71,35 +72,52 @@
 </div>
 <!--{{url_for('static', filename='img/default.png')}}-->
 <div id="alert_placeholder"></div>
-<div class="container" style="float: left">
-    <div class="row" id="actions">
-        <div class="col-lg-10 col-md-10 col-xs-10">
-            <div class="btn-group">
-                <label class="btn btn-primary btn-upload" for="inputImage" title="选择搜索人员">
-                    <input type="file" class="sr-only" id="inputImage" name="file"
-                           accept=".jpg,.jpeg,.png,.gif,.bmp,.tiff"/>
-                    <span class="docs-tooltip" data-toggle="tooltip" title="选择搜索人员">
+<div class="row">
+    <div class="col col-md-2">
+        <select class="selectpicker" id="selector">
+            <option value="1">监控1</option>
+            <option value="2">监控2</option>
+            <option value="3">监控3</option>
+            <option value="4">监控4</option>
+            <option value="5">监控5</option>
+        </select>
+    </div>
+    <div class="col col-md-10">
+        <video id="video" controls="controls">
+            <source id="videosource" src="{{url_for('static', filename='video/1.mp4')}}"/>
+        </video>
+    </div>
+</div>
+<div class="row" id="actions">
+    <div class="col-lg-2 col-md-2 col-xs-2">
+        <div class="btn-group">
+            <label class="btn btn-primary" id="capture" data-method="capture" title="选择当前帧">
+                    <span class="docs-tooltip" data-toggle="tooltip" title="选择当前帧">
+                        <span class="fa fa-crop"></span>
+                    </span>
+            </label>
+            <label class="btn btn-primary btn-upload" for="inputImage" title="选择搜索人员">
+                <input type="file" class="sr-only" id="inputImage" name="file"
+                       accept=".jpg,.jpeg,.png,.gif,.bmp,.tiff"/>
+                <span class="docs-tooltip" data-toggle="tooltip" title="选择搜索人员">
                         <span class="fa fa-upload"></span>
                     </span>
-                </label>
-                <label class="btn btn-primary" id="upload" data-method="upload" title="上传图片">
+            </label>
+            <label class="btn btn-primary" id="upload" data-method="upload" title="上传图片">
                     <span class="docs-tooltip" data-toggle="tooltip" title="上传图片">
                         <span class="fa fa-check"></span>
                     </span>
-                </label>
-            </div>
+            </label>
         </div>
     </div>
-    <div class="row">
-        <div class="col col-md-9">
-            <div class="img-container">
-                <img src="{{url_for('static', filename='img/default.png')}}" alt="Picture">
-            </div>
+    <div class="col col-md-6">
+        <div class="img-container">
+            <img src="{{url_for('static', filename='img/default.png')}}" alt="图像">
         </div>
-        <div class="col col-md-3">
-            <div class="docs-preview clearfix">
-                <div class="img-preview preview-lg"></div>
-            </div>
+    </div>
+    <div class="col col-md-3">
+        <div class="docs-preview clearfix">
+            <div class="img-preview preview-lg"></div>
         </div>
     </div>
 </div>
@@ -108,8 +126,15 @@
 
 {% block scripts %}
 {{ super() }}
+<script type=text/javascript
+        src="{{url_for('static', filename='vendor/bootstrap-select/js/bootstrap-select.min.js')}}"></script>
+<!-- (Optional) Latest compiled and minified JavaScript translation files -->
+<script type=text/javascript
+        src="{{url_for('static', filename='vendor/bootstrap-select/js/i18n/defaults-zh_CN.min.js')}}"></script>
+<script type=text/javascript
+        src="{{url_for('static', filename='vendor/bootstrap-select/js/i18n/defaults-en_US.min.js')}}"></script>
+<script src="{{url_for('static', filename='vendor/cropperjs/cropper.js')}}"></script>
 <script type="text/javascript">
-
     window.onload = function () {
         'use strict';
         var container = document.querySelector('.img-container');
@@ -168,7 +193,30 @@
                 }
             });
         }
+
+        var video = document.getElementById("video");
+        var capture = document.getElementById('capture');
+        capture.onclick = function () {
+            video.pause()
+            var canvas = document.createElement("canvas");
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext('2d')
+                .drawImage(video, 0, 0, canvas.width, canvas.height);
+            image.src = canvas.toDataURL();
+            cropper.destroy();
+            cropper = new Cropper(image, options);
+
+        };
+
+
+        var selector = $('#selector');
+        var source = document.getElementById("videosource");
+        selector.on('changed.bs.select', function (ev) {
+            video.pause();
+            source.src = "/static/video/" + selector.val() + ".mp4";
+            video.load();
+        });
     };
 </script>
-<script src="{{url_for('static', filename='vendor/cropperjs/cropper.js')}}"></script>
 {% endblock scripts %}
