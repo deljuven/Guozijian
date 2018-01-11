@@ -86,7 +86,7 @@ def status():
     # flag, good = matcher.matches()
     # if flag:
     #     pass
-    return render_template("status.html", index=2)
+    return render_template("status.html", index=5)
 
 
 @app.errorhandler(404)

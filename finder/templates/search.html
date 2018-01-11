@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% import "bootstrap/utils.html" as utils %}
 
-{% block title %}天网-人员搜索{% endblock %}
+{% block title %}天网-搜索{% endblock %}
 
 {% block styles %}
 {{ super() }}
@@ -27,13 +27,13 @@
 
     .img-container {
         margin-bottom: 1rem;
-        max-height: 497px;
+        max-height: 320px;
         min-height: 200px;
     }
 
     @media (min-width: 768px) {
         .img-container {
-            min-height: 497px;
+            min-height: 320px;
         }
     }
 
@@ -66,14 +66,13 @@
 {% block page_content %}
 <div class="row row-eq-height">
     <div class="col-lg-10 col-md-10 col-xs-10">
-        <h1 class="page-header">搜索人员</h1>
+        <h1 class="page-header">搜索</h1>
     </div>
     <!-- /.col-lg-12 -->
 </div>
 <!--{{url_for('static', filename='img/default.png')}}-->
-<div id="alert_placeholder"></div>
 <div class="row">
-    <div class="col col-md-2">
+    <div class="col col-md-3">
         <select class="selectpicker" id="selector">
             <option value="1">监控1</option>
             <option value="2">监控2</option>
@@ -82,24 +81,24 @@
             <option value="5">监控5</option>
         </select>
     </div>
-    <div class="col col-md-10">
-        <video id="video" controls="controls">
+    <div class="col col-md-9">
+        <video id="video" controls="controls" style="height: 320px">
             <source id="videosource" src="{{url_for('static', filename='video/1.mp4')}}"/>
         </video>
     </div>
 </div>
 <div class="row" id="actions">
-    <div class="col-lg-2 col-md-2 col-xs-2">
+    <div class="col-lg-3 col-md-3 col-xs-3">
         <div class="btn-group">
             <label class="btn btn-primary" id="capture" data-method="capture" title="选择当前帧">
                     <span class="docs-tooltip" data-toggle="tooltip" title="选择当前帧">
                         <span class="fa fa-crop"></span>
                     </span>
             </label>
-            <label class="btn btn-primary btn-upload" for="inputImage" title="选择搜索人员">
+            <label class="btn btn-primary btn-upload" for="inputImage" title="选择搜索目标">
                 <input type="file" class="sr-only" id="inputImage" name="file"
                        accept=".jpg,.jpeg,.png,.gif,.bmp,.tiff"/>
-                <span class="docs-tooltip" data-toggle="tooltip" title="选择搜索人员">
+                <span class="docs-tooltip" data-toggle="tooltip" title="选择搜索目标">
                         <span class="fa fa-upload"></span>
                     </span>
             </label>

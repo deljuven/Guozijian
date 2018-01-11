@@ -15,6 +15,7 @@ app.use_reloader = True;
 
 APP_PATH = app.root_path
 APP_IMG_SAV_PATH = os.path.join(APP_PATH, 'static', 'data', 'img')
+APP_MOV_SAV_PATH = os.path.join(APP_PATH, 'static', 'data', 'video')
 DB_PATH = os.path.join(APP_PATH, 'db')
 
 if not os.path.exists(APP_IMG_SAV_PATH):

@@ -4,7 +4,7 @@ import numpy as np
 
 from matplotlib import pyplot as plt
 
-MIN_MATCH_COUNT = 10
+MIN_MATCH_COUNT = 5
 
 FLANN_INDEX_KDTREE = 0
 
@@ -73,7 +73,8 @@ class SurfMatcher:
 if __name__ == '__main__':
     # target = cv2.imread('../imgs/face4.jpg', cv2.IMREAD_GRAYSCALE)  # trainImage
     # source, aim = '../imgs/1.jpg', '../imgs/face5.jpg'
-    source, aim = 'D:\\Projects\\web\\monitor\\finder\\static\\data\\img\\pattern.png', 'D:\\Projects\\web\\monitor\\finder\\static\\img\\match-0.png'
+    source, aim = 'D:\\Projects\\web\\monitor\\finder\\static\\data\\img\\pattern.png',\
+                  'D:\\Projects\\web\\monitor\\finder\\static\\img\\match.png'
     mx, index = 0, 0
     origin_bgr = cv2.imread(source)  # queryImage
     target_bgr = cv2.imread(aim)  # trainImage
@@ -110,7 +111,7 @@ if __name__ == '__main__':
         # point1 = (309, 207)
         # point3 = (250, 386)
         # point2 = (322, 378)
-
+        print((point0,point1,point2,point3,))
         cv2.line(target_rgb, point0, point1, (0, 255, 0), 3)
         cv2.line(target_rgb, point1, point2, (0, 255, 0), 3)
         cv2.line(target_rgb, point2, point3, (0, 255, 0), 3)
