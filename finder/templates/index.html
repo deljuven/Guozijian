@@ -18,7 +18,7 @@
     <!-- /.col-lg-12 -->
 </div>
 <div class="row" align="center">
-    <img src="{{url_for('static', filename='img/floor-0.png')}}" class="zoomImage">
+    <img id="bg" src="/static/img/floor-{{cam}}.png" class="zoomImage">
 </div>
 <div class="row" align="center">
     <div class="col col-md-2">
@@ -31,8 +31,8 @@
         </select>
     </div>
     <div class="col col-md-10">
-        <video id="video" controls="controls">
-            <source id="videosource" src="{{url_for('static', filename='video/1.mp4')}}"/>
+        <video id="video" controls="controls" style="height: 320px; float: left">
+            <source id="videosource" src="/static/video/1.mp4?t={{now}}"/>
         </video>
     </div>
 </div>
@@ -53,9 +53,11 @@
         var selector = $('#selector');
         var video = document.getElementById("video");
         var source = document.getElementById("videosource");
+        var img = document.getElementById("bg");
         selector.on('changed.bs.select', function (ev) {
             video.pause();
-            source.src = "/static/video/" + selector.val() + ".mp4";
+            source.src = "/static/video/" + selector.val() + ".mp4?t=" + $.now();
+            img.src="/static/img/floor-" + selector.val() + ".png?t=" + $.now();
             video.load();
             video.play();
         });

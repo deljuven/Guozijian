@@ -82,8 +82,8 @@
         </select>
     </div>
     <div class="col col-md-9">
-        <video id="video" controls="controls" style="height: 320px">
-            <source id="videosource" src="{{url_for('static', filename='video/1.mp4')}}"/>
+        <video id="video" controls="controls" style="height: 320px; float: left">
+            <source id="videosource" src="/static/video/1.mp4?t={{ now }}"/>
         </video>
     </div>
 </div>
@@ -213,7 +213,7 @@
         var source = document.getElementById("videosource");
         selector.on('changed.bs.select', function (ev) {
             video.pause();
-            source.src = "/static/video/" + selector.val() + ".mp4";
+            source.src = "/static/video/" + selector.val() + ".mp4?t=" + $.now();
             video.load();
         });
     };

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import base64
 import os
+from datetime import datetime
 
 from flask import render_template, redirect, url_for, request, jsonify
 from flask_login import login_required
@@ -25,8 +26,8 @@ def home():
 
 @app.route('/index')
 @login_required
-def index():
-    return render_template("index.html")
+def index(cam=1):
+    return render_template("index.html", now=datetime.now(), cam=cam)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -63,7 +64,7 @@ def logout():
 @app.route('/search', methods=['GET'])
 @login_required
 def search():
-    return render_template('search.html')
+    return render_template('search.html', now=datetime.now())
 
 
 @app.route('/upload', methods=['POST', 'OPTIONS'])
